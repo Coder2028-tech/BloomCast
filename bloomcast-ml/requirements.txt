@@ -1,0 +1,6 @@
+torch
+pandas
+geopandas
+rasterio
+scikit-learn
+sentinelhub
