@@ -1,0 +1,18 @@
+{
+  "model": "RandomForest_baseline",
+  "held_out_lake": "Round Valley Reservoir",
+  "train_lakes": [
+    "Lake Hopatcong"
+  ],
+  "rmse": 35.684896478245854,
+  "r2": -0.46296127589626246,
+  "n_train": 24,
+  "n_test": 8,
+  "feature_importance": {
+    "chl_a_lag1": 0.23717885236559172,
+    "chl_a_lag2": 0.04221649649959457,
+    "temp_lag1": 0.23801015739769324,
+    "temp_lag2": 0.43128560354510126,
+    "phosphorus": 0.05130889019201929
+  }
+}
