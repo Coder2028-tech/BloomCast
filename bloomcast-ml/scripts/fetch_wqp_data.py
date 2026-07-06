@@ -12,7 +12,10 @@ LAKES = {
     "Budd Lake": {"lat": 40.8659, "long": -74.7407, "radius": 2},
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ebebc3e9bd1a285d30e409d4f48b79882aa038c9
 SITE_TYPES = ["Lake, Reservoir, Impoundment"]
 
 CHARACTERISTICS = {
@@ -98,6 +101,7 @@ def build_lake_data(lake: str, lat: float, long: float, radius: float) -> pd.Dat
         print(f"  WARNING: no data found for {lake} at all.")
         return pd.DataFrame()
 
+<<<<<<< HEAD
     
     combined = pd.concat(frames, axis=1)
     combined = combined.sort_index()
@@ -108,11 +112,18 @@ def build_lake_data(lake: str, lat: float, long: float, radius: float) -> pd.Dat
             combined[feature] = pd.NA
 
    
+=======
+    combined = pd.concat(frames, axis=1)
+    combined = combined.sort_index()
+
+    for feature in CHARACTERISTICS:
+        if feature not in combined.columns:
+            combined[feature] = pd.NA
+>>>>>>> ebebc3e9bd1a285d30e409d4f48b79882aa038c9
     combined = combined.dropna(how="all", subset=list(CHARACTERISTICS.keys()))
 
     combined["lake"] = lake
     return combined.reset_index()
-
 
 def main():
     all_lakes = []
