@@ -1,30 +1,10 @@
-"""
-BloomCast NJ - Random Forest baseline
-Predicts NEXT SAMPLE chlorophyll-a from the previous 1-2 samples' chl-a,
-temp, and phosphorus.
-
-NOTE: real field sampling for these lakes is roughly monthly during the
-growing season (not weekly), so "next sample" is a more honest framing
-than "next week" - the actual gap between samples varies. Worth stating
-this explicitly in your write-up/judge Q&A as a data-availability
-limitation, not something to gloss over.
-
-Held-out lake: Round Valley Reservoir (spatial generalization test).
-Trained on: Lake Hopatcong + Budd Lake.
-
-Expects data/tabular_features.csv with columns:
-    lake, date, chl_a, temp, phosphorus
-"""
-
 import json
-
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-# ---- Config ----
 DATA_PATH = "data/tabular_features.csv"
 MODEL_OUT = "models/rf_baseline.pkl"
 RESULTS_OUT = "results/rf_baseline_results.json"
@@ -39,11 +19,6 @@ FEATURE_COLS = [
 
 
 def add_lag_features(df: pd.DataFrame, n_lags: int = N_LAGS) -> pd.DataFrame:
-    """Add lagged chl_a/temp features and the next-sample target, computed
-    per-lake so lags never leak across different lakes. Uses groupby+shift
-    directly (not groupby().apply()) since newer pandas versions strip the
-    grouping column out of the sub-frame passed to .apply(), which silently
-    dropped 'lake' from the result."""
     df = df.copy()
     for lag in range(1, n_lags + 1):
         df[f"chl_a_lag{lag}"] = df.groupby("lake")["chl_a"].shift(lag)
@@ -107,14 +82,11 @@ def main():
     print(f"Saved model -> {MODEL_OUT}")
     print(f"Saved results -> {RESULTS_OUT}")
 
-    # Flag persistence-baseline risk for judge Q&A prep
     top_feature = max(results["feature_importance"], key=results["feature_importance"].get)
     if top_feature == "chl_a_lag1" and results["feature_importance"][top_feature] > 0.6:
         print(
             "\n[NOTE] chl_a_lag1 dominates feature importance "
             f"({results['feature_importance'][top_feature]:.2f}). "
-            "Model may be approximating a persistence baseline - worth "
-            "addressing proactively with judges."
         )
 
 

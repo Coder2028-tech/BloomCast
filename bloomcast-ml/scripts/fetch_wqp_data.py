@@ -1,43 +1,3 @@
-"""
-BloomCast NJ - build tabular_features.csv from the EPA/USGS Water Quality Portal (WQP)
-
-Run this yourself (needs internet access) from inside bloomcast-ml, with your
-`bloomcast` conda env active:
-
-    conda activate bloomcast
-    pip install requests pandas   # if not already installed
-    python scripts/fetch_wqp_data.py
-
-WHAT THIS DOES
---------------
-Queries the public WQP Result-search REST API for chlorophyll-a, water
-temperature, total nitrogen, and total phosphorus at your three lakes, then
-reshapes everything into one long-format CSV:
-
-    lake, date, chl_a, temp, nitrogen, phosphorus
-
-WQP REST docs: https://www.waterqualitydata.us/webservices_documentation/
-
-IMPORTANT - CHECK THE OUTPUT
-------------------------------
-1. This version searches by lat/long + radius instead of guessing exact
-   site IDs, so it should catch every relevant lake/reservoir station
-   nearby - but the lake center coordinates below are approximate. If a
-   lake still comes back thin, try increasing its "radius" value in the
-   LAKES dict below, or double-check the coordinates against a map.
-
-2. SITE_TYPES is restricted to "Lake, Reservoir, Impoundment" so a radius
-   search doesn't accidentally pull in nearby streams/tributaries. If a
-   lake still comes back empty, it may be worth removing that filter to
-   see what's actually nearby (some agencies may classify sites
-   differently).
-
-3. Not every site will have every characteristic (esp. nitrogen/phosphorus
-   sub-types vary: "Nitrogen", "Total Nitrogen", "Phosphorus", "Phosphate-
-   phosphorus", etc.) - the script tries several common variants but check
-   the printed row counts to see what's actually available.
-"""
-
 import io
 import time
 
@@ -46,20 +6,15 @@ import requests
 
 BASE_URL = "https://www.waterqualitydata.us/data/Result/search"
 
-# ---- Lake center coordinates + search radius (miles) ----
-# Coordinates are approximate lake centers/main basins. Widen RADIUS_MILES
-# if a lake still comes back with too little data.
 LAKES = {
     "Lake Hopatcong": {"lat": 40.9370, "long": -74.6560, "radius": 3},
     "Round Valley Reservoir": {"lat": 40.6176, "long": -74.8263, "radius": 3},
     "Budd Lake": {"lat": 40.8659, "long": -74.7407, "radius": 2},
 }
 
-# Restrict to actual lake/reservoir sites so a radius search doesn't pull in
-# nearby streams/tributaries by accident.
+
 SITE_TYPES = ["Lake, Reservoir, Impoundment"]
 
-# ---- Characteristic name variants to try for each feature ----
 CHARACTERISTICS = {
     "chl_a": ["Chlorophyll a"],
     "temp": ["Temperature, water"],
@@ -69,20 +24,13 @@ CHARACTERISTICS = {
         "Phosphate-phosphorus",
         "Orthophosphate",
     ],
-    # nitrogen dropped: confirmed 0 rows across all 3 lakes and multiple
-    # name variants when queried via WQP. If you want to revisit this,
-    # the Lake Hopatcong Commission's own annual water quality reports
-    # (PDF) do report ammonia-N directly - would need manual extraction.
 }
 
-START_DATE = "01-01-2015"  # mm-dd-yyyy, adjust as needed
+START_DATE = "01-01-2015" 
 END_DATE = "12-31-2025"
 
 
 def fetch_one_name(lat: float, long: float, radius: float, characteristic_name: str) -> pd.DataFrame:
-    """Query WQP for a lat/long + radius search + a SINGLE characteristic
-    name. Never raises - prints a warning and returns an empty frame on any
-    failure so one bad name can't kill the whole run."""
     params = {
         "lat": lat,
         "long": long,
@@ -114,8 +62,6 @@ def fetch_one_name(lat: float, long: float, radius: float, characteristic_name: 
 
 
 def fetch_characteristic(lat: float, long: float, radius: float, characteristic_names: list[str]) -> pd.DataFrame:
-    """Try each characteristic name variant separately, concatenate whatever
-    comes back. This way one invalid name doesn't block a valid one."""
     frames = []
     for name in characteristic_names:
         df = fetch_one_name(lat, long, radius, name)
@@ -136,7 +82,6 @@ def build_lake_data(lake: str, lat: float, long: float, radius: float) -> pd.Dat
         if df.empty:
             print(f"    no data")
             continue
-        # WQP result columns: ActivityStartDate, ResultMeasureValue, etc.
         keep = df[["ActivityStartDate", "ResultMeasureValue"]].copy()
         keep = keep.rename(columns={
             "ActivityStartDate": "date",
@@ -145,7 +90,6 @@ def build_lake_data(lake: str, lat: float, long: float, radius: float) -> pd.Dat
         keep["date"] = pd.to_datetime(keep["date"], errors="coerce")
         keep[feature] = pd.to_numeric(keep[feature], errors="coerce")
         keep = keep.dropna()
-        # collapse same-day duplicates (multiple stations/depths per day)
         keep = keep.groupby("date")[feature].mean().to_frame()
         print(f"    got {len(keep)} rows")
         frames.append(keep)
@@ -154,21 +98,16 @@ def build_lake_data(lake: str, lat: float, long: float, radius: float) -> pd.Dat
         print(f"  WARNING: no data found for {lake} at all.")
         return pd.DataFrame()
 
-    # merge all features on their ACTUAL sample dates - do NOT force onto an
-    # artificial weekly grid. Real field sampling for these lakes is roughly
-    # monthly during the growing season, so a weekly grid would manufacture
-    # thousands of empty rows that were never going to have data anyway.
+    
     combined = pd.concat(frames, axis=1)
     combined = combined.sort_index()
 
-    # make sure every expected feature column exists, even if this lake had
-    # zero data for one of them (e.g. no nitrogen readings at all)
+   
     for feature in CHARACTERISTICS:
         if feature not in combined.columns:
             combined[feature] = pd.NA
 
-    # drop rows where every feature is missing (shouldn't happen much since
-    # we merge on real dates, but just in case)
+   
     combined = combined.dropna(how="all", subset=list(CHARACTERISTICS.keys()))
 
     combined["lake"] = lake
