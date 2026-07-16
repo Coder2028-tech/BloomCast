@@ -10,6 +10,7 @@ app = FastAPI(title="BloomCast NJ API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -24,12 +25,17 @@ FEATURE_ORDER = ["chl_a_lag1", "chl_a_lag2", "temp_lag1", "temp_lag2", "phosphor
 
 
 ZIP_TO_LAKE = {
-    "07849": "Lake Hopatcong",
-    "07801": "Lake Hopatcong",
-    "07836": "Lake Hopatcong",
-    "07828": "Budd Lake",
-    "08833": "Round Valley Reservoir",
-    "08822": "Round Valley Reservoir",
+    "07849": "Lake Hopatcong", 
+    "07843": "Lake Hopatcong",  
+    "07850": "Lake Hopatcong",  
+    "07874": "Lake Hopatcong", 
+    "07857": "Lake Hopatcong",  
+    "07852": "Lake Hopatcong",  
+    "07828": "Budd Lake",       
+    "07836": "Budd Lake",      
+    "08833": "Round Valley Reservoir",  
+    "08801": "Round Valley Reservoir",  
+    "08809": "Round Valley Reservoir", 
 }
 
 
