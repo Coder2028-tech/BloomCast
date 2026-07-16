@@ -7,7 +7,7 @@ const RISK_STYLES = {
   Danger: { bg: "bg-red-100", text: "text-red-800", ring: "ring-red-300" },
 };
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://bloomcast-oaco.onrender.com";
 
 export default function App() {
   const [zip, setZip] = useState("");
@@ -27,7 +27,7 @@ export default function App() {
       const data = await res.json();
       setResult(data);
     } catch (e) {
-      setResult({ error: "Couldn't fetch forecast. Is the API running?" });
+      setResult({ error: "Couldn't fetch forecast. The backend may be waking up from sleep - try again in a moment." });
     }
     setLoading(false);
   }
