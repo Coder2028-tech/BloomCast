@@ -1,10 +1,12 @@
 import json
+
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
+# ---- Config ----
 DATA_PATH = "data/tabular_features.csv"
 MODEL_OUT = "models/rf_baseline.pkl"
 RESULTS_OUT = "results/rf_baseline_results.json"
@@ -19,6 +21,11 @@ FEATURE_COLS = [
 
 
 def add_lag_features(df: pd.DataFrame, n_lags: int = N_LAGS) -> pd.DataFrame:
+    """Add lagged chl_a/temp features and the next-sample target, computed
+    per-lake so lags never leak across different lakes. Uses groupby+shift
+    directly (not groupby().apply()) since newer pandas versions strip the
+    grouping column out of the sub-frame passed to .apply(), which silently
+    dropped 'lake' from the result."""
     df = df.copy()
     for lag in range(1, n_lags + 1):
         df[f"chl_a_lag{lag}"] = df.groupby("lake")["chl_a"].shift(lag)
@@ -62,6 +69,12 @@ def main():
     rmse = float(np.sqrt(mean_squared_error(y_test, preds)))
     r2 = float(r2_score(y_test, preds))
 
+    print("Held-out lake test rows (actual vs predicted):")
+    diagnostic = test_df[["date"] + FEATURE_COLS + ["target_chl_a_next"]].copy()
+    diagnostic["predicted"] = preds
+    print(diagnostic.to_string(index=False))
+    print()
+
     results = {
         "model": "RandomForest_baseline",
         "held_out_lake": HELD_OUT_LAKE,
@@ -87,6 +100,8 @@ def main():
         print(
             "\n[NOTE] chl_a_lag1 dominates feature importance "
             f"({results['feature_importance'][top_feature]:.2f}). "
+            "Model may be approximating a persistence baseline - worth "
+            "addressing proactively with judges."
         )
 
 

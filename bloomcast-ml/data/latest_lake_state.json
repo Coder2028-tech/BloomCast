@@ -1,0 +1,26 @@
+{
+  "Budd Lake": {
+    "chl_a_lag1": 24.80666666666667,
+    "chl_a_lag2": 24.08,
+    "temp_lag1": 25.6,
+    "temp_lag2": 26.203384615384618,
+    "phosphorus": 0.25,
+    "as_of_date": "2026-07-11"
+  },
+  "Lake Hopatcong": {
+    "chl_a_lag1": 15.571428571428571,
+    "chl_a_lag2": 12.857142857142858,
+    "temp_lag1": 25.4,
+    "temp_lag2": 19.360833333333332,
+    "phosphorus": 0.0,
+    "as_of_date": "2026-07-11"
+  },
+  "Round Valley Reservoir": {
+    "chl_a_lag1": 18.543333333333333,
+    "chl_a_lag2": 2.03,
+    "temp_lag1": 25.2,
+    "temp_lag2": 20.41315789473684,
+    "phosphorus": 0.0,
+    "as_of_date": "2026-07-11"
+  }
+}

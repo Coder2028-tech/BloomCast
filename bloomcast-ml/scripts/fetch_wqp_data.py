@@ -6,11 +6,30 @@ import requests
 
 BASE_URL = "https://www.waterqualitydata.us/data/Result/search"
 
-LAKES = {
-    "Lake Hopatcong": {"lat": 40.9370, "long": -74.6560, "radius": 3},
-    "Round Valley Reservoir": {"lat": 40.6176, "long": -74.8263, "radius": 3},
-    "Budd Lake": {"lat": 40.8659, "long": -74.7407, "radius": 2},
-}
+
+LAKE_TARGETS_PATH = "data/lake_targets.csv"
+DEFAULT_RADIUS_MILES = 3  
+
+
+def load_lakes(path: str = LAKE_TARGETS_PATH) -> dict:
+    targets = pd.read_csv(path)
+    lakes = {}
+    skipped = []
+    for _, row in targets.iterrows():
+        if pd.isna(row.get("latitude")) or pd.isna(row.get("longitude")):
+            skipped.append(row["name"])
+            continue
+        lakes[row["name"]] = {
+            "lat": float(row["latitude"]),
+            "long": float(row["longitude"]),
+            "radius": DEFAULT_RADIUS_MILES,
+        }
+    if skipped:
+        print(f"Skipping {len(skipped)} lake(s) with no matched coordinates: {', '.join(skipped)}")
+    return lakes
+
+
+LAKES = load_lakes()
 
 SITE_TYPES = ["Lake, Reservoir, Impoundment"]
 

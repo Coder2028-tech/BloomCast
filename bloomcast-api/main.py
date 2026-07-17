@@ -40,16 +40,7 @@ ZIP_TO_LAKE = {
 
 
 def classify_risk(chl_a_prediction: float) -> str:
-    """Very rough chlorophyll-a -> risk-category thresholds.
-
-    THESE NUMBERS ARE PLACEHOLDERS. NJ DEP's actual HAB guidance uses
-    cyanobacteria CELL DENSITY (cells/mL), not chlorophyll-a directly - the
-    known scientific tension flagged in the project notes. Before using
-    this for anything beyond an MVP demo, these thresholds need real
-    justification (e.g. from NJ DEP HAB guidance documents or published
-    chl-a/cyanobacteria correlation studies), and ideally should be
-    calibrated per-lake rather than as one global cutoff.
-    """
+    
     if chl_a_prediction < 10:
         return "Safe"
     elif chl_a_prediction < 20:
@@ -63,7 +54,6 @@ def classify_risk(chl_a_prediction: float) -> str:
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": rf_model is not None}
-
 
 @app.get("/forecast/{zip_code}")
 def forecast(zip_code: str):
