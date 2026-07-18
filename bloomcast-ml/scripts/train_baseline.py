@@ -6,7 +6,6 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-# ---- Config ----
 DATA_PATH = "data/tabular_features.csv"
 MODEL_OUT = "models/rf_baseline.pkl"
 RESULTS_OUT = "results/rf_baseline_results.json"
@@ -21,11 +20,6 @@ FEATURE_COLS = [
 
 
 def add_lag_features(df: pd.DataFrame, n_lags: int = N_LAGS) -> pd.DataFrame:
-    """Add lagged chl_a/temp features and the next-sample target, computed
-    per-lake so lags never leak across different lakes. Uses groupby+shift
-    directly (not groupby().apply()) since newer pandas versions strip the
-    grouping column out of the sub-frame passed to .apply(), which silently
-    dropped 'lake' from the result."""
     df = df.copy()
     for lag in range(1, n_lags + 1):
         df[f"chl_a_lag{lag}"] = df.groupby("lake")["chl_a"].shift(lag)
