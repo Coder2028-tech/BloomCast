@@ -1,0 +1,27 @@
+name,slug,latitude,longitude,match_count,match_score,source,notes
+Lake Hopatcong,lake-hopatcong,40.93922311,-74.64145675,4,100,station.csv,Centroid from 4 station match(es).
+Greenwood Lake,greenwood-lake,41.16839400,-74.33930200,2,100,station.csv,Centroid from 2 station match(es).
+Spruce Run Reservoir,spruce-run-reservoir,40.65841740,-74.92837809,3,100,station.csv,Centroid from 3 station match(es).
+Round Valley Reservoir,round-valley-reservoir,40.62718910,-74.84343343,4,100,station.csv,Centroid from 4 station match(es).
+Merrill Creek Reservoir,merrill-creek-reservoir,40.73496800,-75.10380300,1,100,station.csv,Centroid from 1 station match(es).
+Manasquan Reservoir,manasquan-reservoir,40.17561500,-74.20474000,2,100,station.csv,Centroid from 2 station match(es).
+Deal Lake,deal-lake,40.23216957,-74.01054800,7,100,station.csv,Centroid from 7 station match(es).
+Lake Musconetcong,lake-musconetcong,40.90771982,-74.69429199,2,100,station.csv,Centroid from 2 station match(es).
+Furnace Lake,furnace-lake,40.79603950,-75.01391700,2,90,station.csv,Centroid from 2 station match(es).
+Swartswood Lake,swartswood-lake,41.07059212,-74.83538003,2,100,station.csv,Centroid from 2 station match(es).
+Wawayanda Lake,wawayanda-lake,41.18203200,-74.43294300,1,100,station.csv,Centroid from 1 station match(es).
+Atsion Lake,atsion-lake,39.74099900,-74.73084000,2,100,station.csv,Centroid from 2 station match(es); excluded distant same-name station(s).
+Union Lake,union-lake,39.41157140,-75.06396565,2,100,station.csv,Centroid from 2 station match(es).
+Mirror Lake,mirror-lake,39.97263071,-74.56642878,3,100,station.csv,Centroid from 3 station match(es).
+Shepherd Lake,shepherd-lake,,,0,0,,No matching station coordinate found.
+Culver Lake,culver-lake,,,0,0,,No matching station coordinate found.
+Cranberry Lake,cranberry-lake,40.94961555,-74.74550445,8,90,station.csv,Centroid from 8 station match(es).
+Budd Lake,budd-lake,40.87207576,-74.74621686,2,100,station.csv,Centroid from 2 station match(es).
+Lake Mohawk,lake-mohawk,41.01994460,-74.65939142,12,90,station.csv,Centroid from 12 station match(es).
+Echo Lake,echo-lake,41.05471400,-74.40891600,2,100,station.csv,Centroid from 2 station match(es); excluded distant same-name station(s).
+Carnegie Lake,carnegie-lake,40.35556450,-74.62729950,2,100,station.csv,Centroid from 2 station match(es).
+Packanack Lake,packanack-lake,40.93548087,-74.25538694,1,100,station.csv,Centroid from 1 station match(es).
+Pompton Lake,pompton-lake,41.00602200,-74.27787900,1,100,station.csv,Centroid from 1 station match(es).
+Farrington Lake,farrington-lake,40.43232100,-74.46984450,2,100,station.csv,Centroid from 2 station match(es).
+Orange Reservoir,orange-reservoir,40.76263285,-74.28597177,1,100,station.csv,Centroid from 1 station match(es).
+Cozy Lake,cozy-lake,41.01503210,-74.50303590,0,0,manual,Added from USGS topo coordinates private residential lake
