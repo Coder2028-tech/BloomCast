@@ -1,0 +1,17 @@
+{
+  "model": "LSTM_baseline",
+  "seq_len": 3,
+  "hidden_size": 32,
+  "epochs": 300,
+  "features": [
+    "chl_a",
+    "temp",
+    "phosphorus"
+  ],
+  "held_out_lake": "Round Valley Reservoir",
+  "n_train_sequences": 184,
+  "n_test_sequences": 8,
+  "n_train_lakes": 17,
+  "rmse": 26.243021300760848,
+  "r2": -2543.0263671875
+}

@@ -2,25 +2,145 @@
   "Budd Lake": {
     "chl_a_lag1": 24.80666666666667,
     "chl_a_lag2": 24.08,
-    "temp_lag1": 25.6,
-    "temp_lag2": 26.203384615384618,
-    "phosphorus": 0.25,
-    "as_of_date": "2026-07-11"
+    "temp_lag1": 13.0,
+    "temp_lag2": 15.7,
+    "phosphorus": 0.023075,
+    "as_of_date": "2023-10-23"
+  },
+  "Carnegie Lake": {
+    "chl_a_lag1": 6.7875,
+    "chl_a_lag2": 18.0475,
+    "temp_lag1": 25.329411764705885,
+    "temp_lag2": 11.20625,
+    "phosphorus": 0.10524,
+    "as_of_date": "2023-09-26"
+  },
+  "Cozy Lake": {
+    "chl_a_lag1": 26.049999999999997,
+    "chl_a_lag2": 19.733333333333334,
+    "temp_lag1": 16.183333333333334,
+    "temp_lag2": 22.97741935483871,
+    "phosphorus": 0.0224499999999999,
+    "as_of_date": "2019-10-16"
+  },
+  "Cranberry Lake": {
+    "chl_a_lag1": 2.05,
+    "chl_a_lag2": 4.225,
+    "temp_lag1": 8.8375,
+    "temp_lag2": 21.9,
+    "phosphorus": 0.01,
+    "as_of_date": "2024-11-19"
+  },
+  "Deal Lake": {
+    "chl_a_lag1": 24.35,
+    "chl_a_lag2": 42.5,
+    "temp_lag1": 23.057142857142857,
+    "temp_lag2": 27.6,
+    "phosphorus": 0.0202666666666666,
+    "as_of_date": "2023-09-19"
+  },
+  "Echo Lake": {
+    "chl_a_lag1": 23.8,
+    "chl_a_lag2": 24.15,
+    "temp_lag1": 18.347,
+    "temp_lag2": 20.242105263157896,
+    "phosphorus": 0.0226999999999999,
+    "as_of_date": "2019-09-19"
+  },
+  "Farrington Lake": {
+    "chl_a_lag1": 2.5533333333333332,
+    "chl_a_lag2": 7.103333333333334,
+    "temp_lag1": 19.0,
+    "temp_lag2": 25.6,
+    "phosphorus": 0.01,
+    "as_of_date": "2024-10-03"
+  },
+  "Furnace Lake": {
+    "chl_a_lag1": 18.005000000000003,
+    "chl_a_lag2": 4.4,
+    "temp_lag1": 17.11357142857143,
+    "temp_lag2": 17.610714285714288,
+    "phosphorus": 0.02685,
+    "as_of_date": "2018-09-14"
+  },
+  "Greenwood Lake": {
+    "chl_a_lag1": 15.14,
+    "chl_a_lag2": 15.81,
+    "temp_lag1": 14.335238095238095,
+    "temp_lag2": 19.726956521739133,
+    "phosphorus": 0.0223076923076923,
+    "as_of_date": "2025-10-23"
   },
   "Lake Hopatcong": {
     "chl_a_lag1": 15.571428571428571,
     "chl_a_lag2": 12.857142857142858,
-    "temp_lag1": 25.4,
-    "temp_lag2": 19.360833333333332,
-    "phosphorus": 0.0,
-    "as_of_date": "2026-07-11"
+    "temp_lag1": 19.360833333333332,
+    "temp_lag2": 21.11182857142857,
+    "phosphorus": 0.0275,
+    "as_of_date": "2025-09-24"
+  },
+  "Lake Musconetcong": {
+    "chl_a_lag1": 17.0,
+    "chl_a_lag2": 10.5,
+    "temp_lag1": 23.065333333333335,
+    "temp_lag2": 13.915,
+    "phosphorus": 0.0166666666666666,
+    "as_of_date": "2025-08-12"
+  },
+  "Mirror Lake": {
+    "chl_a_lag1": 8.296666666666667,
+    "chl_a_lag2": 3.5233333333333334,
+    "temp_lag1": 15.446153846153846,
+    "temp_lag2": 16.984615384615385,
+    "phosphorus": 0.1066666666666666,
+    "as_of_date": "2024-10-24"
+  },
+  "Packanack Lake": {
+    "chl_a_lag1": 10.875,
+    "chl_a_lag2": 6.225,
+    "temp_lag1": 19.805882352941175,
+    "temp_lag2": 24.46470588235294,
+    "phosphorus": 0.015,
+    "as_of_date": "2024-10-10"
+  },
+  "Pompton Lake": {
+    "chl_a_lag1": 21.950000000000003,
+    "chl_a_lag2": 31.0,
+    "temp_lag1": 22.65875,
+    "temp_lag2": 26.59636363636364,
+    "phosphorus": 0.0286,
+    "as_of_date": "2019-09-13"
   },
   "Round Valley Reservoir": {
-    "chl_a_lag1": 18.543333333333333,
-    "chl_a_lag2": 2.03,
-    "temp_lag1": 25.2,
-    "temp_lag2": 20.41315789473684,
-    "phosphorus": 0.0,
-    "as_of_date": "2026-07-11"
+    "chl_a_lag1": 2.03,
+    "chl_a_lag2": 1.0,
+    "temp_lag1": 20.413157894736845,
+    "temp_lag2": 9.645945945945943,
+    "phosphorus": 0.0071168181818181,
+    "as_of_date": "2023-08-31"
+  },
+  "Swartswood Lake": {
+    "chl_a_lag1": 16.03,
+    "chl_a_lag2": 13.932999999999998,
+    "temp_lag1": 13.524897959183674,
+    "temp_lag2": 19.333653846153847,
+    "phosphorus": 0.0122815789473684,
+    "as_of_date": "2018-10-23"
+  },
+  "Union Lake": {
+    "chl_a_lag1": 4.7299999999999995,
+    "chl_a_lag2": 30.593333333333337,
+    "temp_lag1": 13.514444444444443,
+    "temp_lag2": 27.706470588235295,
+    "phosphorus": 0.0280666666666666,
+    "as_of_date": "2016-10-27"
+  },
+  "Wawayanda Lake": {
+    "chl_a_lag1": 8.01,
+    "chl_a_lag2": 7.495,
+    "temp_lag1": 9.61780487804878,
+    "temp_lag2": 10.859756097560975,
+    "phosphorus": 0.0157299999999999,
+    "as_of_date": "2018-10-04"
   }
 }

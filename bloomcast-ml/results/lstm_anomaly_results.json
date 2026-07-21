@@ -1,0 +1,21 @@
+{
+  "model": "LSTM_per_lake_anomaly",
+  "approach": "predict deviation from each lake's own log-median baseline",
+  "extra_features": [
+    "month_sin",
+    "month_cos",
+    "days_gap"
+  ],
+  "seq_len": 3,
+  "hidden_size": 32,
+  "epochs_trained": 69,
+  "best_val_loss": 0.5512228012084961,
+  "held_out_lake": "Round Valley Reservoir",
+  "n_train_sequences": 148,
+  "n_val_sequences": 36,
+  "n_test_sequences": 8,
+  "rmse": 0.7033758563668132,
+  "r2": -0.8275476694107056,
+  "risk_tier_accuracy": 1.0,
+  "caveat": "Held-out lake's own historical baseline is used at prediction time, so this tests generalization of bloom DYNAMICS, not zero-shot prediction for an unmonitored lake."
+}

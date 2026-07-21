@@ -1,8 +1,10 @@
 {
-  "model": "RandomForest_baseline",
+  "model": "RandomForest_log",
+  "target_transform": "log1p",
   "held_out_lake": "Round Valley Reservoir",
   "train_lakes": [
     "Carnegie Lake",
+    "Cozy Lake",
     "Cranberry Lake",
     "Deal Lake",
     "Echo Lake",
@@ -16,15 +18,15 @@
     "Swartswood Lake",
     "Union Lake"
   ],
-  "rmse": 20.8428517122499,
-  "r2": -1965.88969127067,
-  "n_train": 107,
+  "rmse": 7.82455376748757,
+  "r2": -276.19467629668736,
+  "n_train": 109,
   "n_test": 4,
   "feature_importance": {
-    "chl_a_lag1": 0.29035194190617364,
-    "chl_a_lag2": 0.1384541422883746,
-    "temp_lag1": 0.2889940250006301,
-    "temp_lag2": 0.15811368838079948,
-    "phosphorus": 0.1240862024240221
+    "chl_a_lag1": 0.2623666483277817,
+    "chl_a_lag2": 0.2050132857335163,
+    "temp_lag1": 0.17560053965604636,
+    "temp_lag2": 0.1829105439712386,
+    "phosphorus": 0.17410898231141703
   }
 }

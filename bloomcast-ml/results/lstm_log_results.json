@@ -1,0 +1,20 @@
+{
+  "model": "LSTM_log",
+  "target_transform": "log1p",
+  "seq_len": 3,
+  "hidden_size": 32,
+  "epochs_trained": 57,
+  "early_stopping_patience": 50,
+  "best_val_loss": 1.2334771156311035,
+  "features": [
+    "chl_a",
+    "temp",
+    "phosphorus"
+  ],
+  "held_out_lake": "Round Valley Reservoir",
+  "n_train_sequences": 148,
+  "n_val_sequences": 36,
+  "n_test_sequences": 8,
+  "rmse": 5.979839787713275,
+  "r2": -131.0908966064453
+}
