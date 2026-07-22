@@ -38,7 +38,7 @@ BloomCast/
 ## Contributors
 
 - **Riya Vazirani Laheja** — ML baseline/modeling, React/FastAPI web application, field sampling
-- **[Partner name]** — Data engineering: NLDAS-2 atmospheric pipeline, Sentinel-2 satellite imagery pipeline
+- **Madhu Mohanakrishnan** — Data engineering: NLDAS-2 atmospheric pipeline, Sentinel-2 satellite imagery pipeline
 
 ## Dependencies
 
