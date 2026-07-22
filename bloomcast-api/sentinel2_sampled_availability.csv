@@ -1,0 +1,4 @@
+lake,requested_field_date,july_11_scene_count,usable_download_date,image_count,width,height,bands,valid_data_pixels,notes
+Lake Hopatcong,2026-07-11,0,2026-07-08,1,299,300,7,89700,No Sentinel-2 L2A scene found on 2026-07-11; nearest clear pre-field scene downloaded.
+Round Valley Reservoir,2026-07-11,0,2026-07-08,1,300,300,7,90000,No Sentinel-2 L2A scene found on 2026-07-11; nearest clear pre-field scene downloaded.
+Budd Lake,2026-07-11,0,2026-07-08,1,299,300,7,89700,No Sentinel-2 L2A scene found on 2026-07-11; nearest clear pre-field scene downloaded.
