@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bloomcastnj"
+version = "0.1.0"
+description = "Data pipelines for BloomCast NJ lake forecasting inputs."
+requires-python = ">=3.9"
+dependencies = [
+    "requests>=2.31",
+    "numpy>=1.23",
+    "xarray>=2024.1",
+    "netCDF4>=1.6",
+    "pydap>=3.4",
+    "sentinelhub>=3.11",
+]
+
+[project.scripts]
+bloomcast-data = "bloomcast.data.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["bloomcast*"]
