@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LakeMap from "./LakeMap";
+import Explainer from "./Explainer";
 
 const RISK_STYLES = {
   Safe: { bg: "bg-emerald-100", text: "text-emerald-800", ring: "ring-emerald-300" },
@@ -85,6 +86,7 @@ export default function App() {
       )}
 
       <LakeMap />
+      <Explainer/>
     </div>
   );
 }
