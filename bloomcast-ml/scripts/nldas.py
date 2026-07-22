@@ -19,6 +19,7 @@ GES_DISC_OPENDAP_ROOT = "https://hydro1.gesdisc.eosdis.nasa.gov/opendap/NLDAS"
 class NldasProduct:
     short_name: str = "NLDAS_FORA0125_H"
     version: str = "2.0"
+    file_version: str = "020"
     extension: str = "nc4"
 
     @property
@@ -26,8 +27,7 @@ class NldasProduct:
         return f"{self.short_name}.{self.version}"
 
     def file_name(self, timestamp: datetime) -> str:
-        return f"{self.short_name}.A{timestamp:%Y%m%d}.{timestamp:%H}00.{self.version}.{self.extension}"
-
+        return f"{self.short_name}.A{timestamp:%Y%m%d}.{timestamp:%H}00.{self.file_version}.{self.extension}"
     def url(self, timestamp: datetime, access: str = "data") -> str:
         root = GES_DISC_OPENDAP_ROOT if access == "opendap" else GES_DISC_DATA_ROOT
         return "/".join(
@@ -45,6 +45,25 @@ class NldasProduct:
         return out_dir / self.collection / f"{timestamp:%Y}" / f"{timestamp:%j}" / self.file_name(timestamp)
 
 
+class SessionWithHeaderRedirection(requests.Session):
+    AUTH_HOST = "urs.earthdata.nasa.gov"
+
+    def rebuild_auth(self, prepared_request, response):
+        headers = prepared_request.headers
+        if "Authorization" not in headers:
+            return
+
+        original_host = requests.utils.urlparse(response.request.url).hostname
+        redirect_host = requests.utils.urlparse(prepared_request.url).hostname
+
+        if original_host == redirect_host:
+            return
+        if self.AUTH_HOST in (original_host, redirect_host):
+            return  
+
+        del headers["Authorization"]
+
+
 def earthdata_session(
     username: Optional[str] = None,
     password: Optional[str] = None,
@@ -55,7 +74,7 @@ def earthdata_session(
     if bool(username) != bool(password):
         raise ValueError("Set both EARTHDATA_USERNAME and EARTHDATA_PASSWORD, or use a .netrc file.")
 
-    session = requests.Session()
+    session = SessionWithHeaderRedirection()
     session.headers.update({"User-Agent": "BloomCastNJ/0.1"})
     session.trust_env = True
     if username and password:
