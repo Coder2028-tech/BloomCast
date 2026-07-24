@@ -1,4 +1,7 @@
-fastapi
-uvicorn
-joblib
-scikit-learn
+requests>=2.31
+numpy>=1.23
+xarray>=2024.1
+netCDF4>=1.6
+pydap>=3.4
+sentinelhub>=3.11
+tifffile>=2023.7
