@@ -20,20 +20,23 @@ DEFAULT_EVALSCRIPT = """
 function setup() {
   return {
     input: [{
-      bands: ["B02", "B03", "B04", "B08", "B11", "SCL", "dataMask"],
+      bands: ["B02", "B03", "B04", "B05", "B08", "B11", "SCL", "dataMask"],
       units: "DN"
     }],
     output: {
-      bands: 7,
+      bands: 8,
       sampleType: "UINT16"
     }
   };
 }
 
 function evaluatePixel(sample) {
-  return [sample.B02, sample.B03, sample.B04, sample.B08, sample.B11, sample.SCL, sample.dataMask];
+  return [sample.B02, sample.B03, sample.B04, sample.B05, sample.B08, sample.B11, sample.SCL, sample.dataMask];
 }
 """.strip()
+
+SENTINEL2_BANDS = ("B02", "B03", "B04", "B05", "B08", "B11", "SCL", "dataMask")
+SCL_WATER = 6
 
 
 @dataclass(frozen=True)
@@ -51,6 +54,18 @@ class Sentinel2RequestResult:
     valid_data_pixels: int = 0
     skipped: bool = False
     message: str = ""
+
+
+@dataclass(frozen=True)
+class NdciSummary:
+    lake: str
+    slug: str
+    pass_date: str
+    source_path: Path
+    mean_ndci: float
+    valid_water_pixels: int
+    total_pixels: int
+    water_pixel_fraction: float
 
 
 def sentinelhub_config():
@@ -232,7 +247,7 @@ def plan_sentinel2_target(
         pass_date=pass_date,
         width=width,
         height=height,
-        bands=7,
+        bands=len(SENTINEL2_BANDS),
         skipped=False,
         message=message,
     )
@@ -407,7 +422,7 @@ def pass_date_interval(pass_date: str) -> tuple[str, str]:
     return f"{start_date.isoformat()}T00:00:00Z", f"{end_date.isoformat()}T00:00:00Z"
 
 
-def validate_sentinel2_images(images, expected_bands: int = 7) -> dict[str, int]:
+def validate_sentinel2_images(images, expected_bands: int = len(SENTINEL2_BANDS)) -> dict[str, int]:
     if not images:
         raise RuntimeError("Sentinel Hub returned no images.")
 
@@ -442,6 +457,147 @@ def validate_sentinel2_images(images, expected_bands: int = 7) -> dict[str, int]
         "bands": int(bands),
         "valid_data_pixels": valid_data_pixels,
     }
+
+
+def compute_ndci(image, water_only: bool = True):
+    """Return an NDCI raster and its valid-pixel mask for an 8-band download.
+
+    Band order is defined by ``SENTINEL2_BANDS``. NDCI is
+    (B05 - B04) / (B05 + B04). Invalid data, a zero denominator, cloud/shadow
+    SCL classes, and (by default) pixels not classified as water are excluded.
+    """
+    try:
+        import numpy as np
+    except ImportError as exc:
+        raise RuntimeError("Install numpy to process Sentinel-2 imagery: pip install -r requirements.txt") from exc
+
+    image = np.asarray(image)
+    if image.ndim != 3 or image.shape[2] != len(SENTINEL2_BANDS):
+        raise ValueError(
+            f"Expected image shape (height, width, {len(SENTINEL2_BANDS)}) "
+            f"with bands {', '.join(SENTINEL2_BANDS)}, got {image.shape}."
+        )
+
+    red = image[:, :, 2].astype(np.float64)
+    red_edge = image[:, :, 3].astype(np.float64)
+    scl = image[:, :, 6]
+    denominator = red_edge + red
+    valid = (image[:, :, 7] > 0) & np.isfinite(red) & np.isfinite(red_edge) & (denominator > 0)
+    if water_only:
+        valid &= scl == SCL_WATER
+    else:
+        # Exclude no-data, saturated/defective, cloud shadow, clouds, and cirrus.
+        valid &= ~np.isin(scl, (0, 1, 3, 8, 9, 10))
+
+    ndci = np.full(red.shape, np.nan, dtype=np.float64)
+    ndci[valid] = (red_edge[valid] - red[valid]) / denominator[valid]
+    return ndci, valid
+
+
+def summarize_ndci(
+    image,
+    lake: str,
+    slug: str,
+    pass_date: str,
+    source_path: Path | str = "",
+    water_only: bool = True,
+) -> NdciSummary:
+    import numpy as np
+
+    ndci, valid = compute_ndci(image, water_only=water_only)
+    valid_water_pixels = int(np.count_nonzero(valid))
+    if valid_water_pixels == 0:
+        raise RuntimeError(f"No valid water pixels available for {lake} on {pass_date}.")
+    total_pixels = int(valid.size)
+    return NdciSummary(
+        lake=lake,
+        slug=slug,
+        pass_date=normalize_pass_date(pass_date),
+        source_path=Path(source_path),
+        mean_ndci=float(np.mean(ndci[valid])),
+        valid_water_pixels=valid_water_pixels,
+        total_pixels=total_pixels,
+        water_pixel_fraction=valid_water_pixels / total_pixels,
+    )
+
+
+def process_sentinel2_directory(
+    raw_dir: Path | str,
+    out_csv: Path | str,
+    water_only: bool = True,
+) -> list[NdciSummary]:
+    """Process Sentinel Hub TIFFs and write one NDCI summary per lake-date."""
+    raw_dir = Path(raw_dir)
+    manifest_path = raw_dir / "manifest.csv"
+    if not manifest_path.exists():
+        raise RuntimeError(f"Sentinel-2 manifest not found: {manifest_path}")
+
+    try:
+        import tifffile
+    except ImportError as exc:
+        raise RuntimeError("Install tifffile to process Sentinel-2 GeoTIFFs: pip install -r requirements.txt") from exc
+
+    summaries: list[NdciSummary] = []
+    with manifest_path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    for row in rows:
+        if row.get("skipped", "").lower() == "true" or int(row.get("image_count") or 0) == 0:
+            continue
+        pass_date = row.get("pass_date") or row["start"][:10]
+        output_dir = Path(row["output_dir"])
+        if not output_dir.is_absolute():
+            output_dir = Path.cwd() / output_dir
+        candidates = sorted(output_dir.rglob("response.tiff"), key=lambda path: path.stat().st_mtime, reverse=True)
+        if not candidates:
+            raise RuntimeError(f"No response.tiff found under {output_dir}.")
+        source_path = candidates[0]
+        image = tifffile.imread(source_path)
+        summaries.append(
+            summarize_ndci(
+                image=image,
+                lake=row["lake"],
+                slug=row["slug"],
+                pass_date=pass_date,
+                source_path=source_path,
+                water_only=water_only,
+            )
+        )
+
+    write_ndci_csv(summaries, out_csv)
+    return summaries
+
+
+def write_ndci_csv(summaries: Iterable[NdciSummary], path: Path | str) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = [
+        "lake",
+        "slug",
+        "pass_date",
+        "mean_chlorophyll_a_index",
+        "mean_ndci",
+        "valid_water_pixels",
+        "total_pixels",
+        "water_pixel_fraction",
+        "source_path",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for summary in summaries:
+            writer.writerow(
+                {
+                    "lake": summary.lake,
+                    "slug": summary.slug,
+                    "pass_date": summary.pass_date,
+                    "mean_chlorophyll_a_index": f"{summary.mean_ndci:.8f}",
+                    "mean_ndci": f"{summary.mean_ndci:.8f}",
+                    "valid_water_pixels": summary.valid_water_pixels,
+                    "total_pixels": summary.total_pixels,
+                    "water_pixel_fraction": f"{summary.water_pixel_fraction:.8f}",
+                    "source_path": summary.source_path,
+                }
+            )
 
 
 def _format_bbox(bbox: tuple[float, float, float, float]) -> str:
