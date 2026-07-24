@@ -14,6 +14,7 @@ dependencies = [
     "netCDF4>=1.6",
     "pydap>=3.4",
     "sentinelhub>=3.11",
+    "tifffile>=2023.7",
 ]
 
 [project.scripts]
