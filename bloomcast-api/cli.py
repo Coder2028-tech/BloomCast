@@ -17,7 +17,7 @@ from .lakes import (
     write_targets_csv,
 )
 from .nldas import NldasProduct, download_nldas_range, earthdata_session, open_nldas_dataset, opendap_urls
-from .sentinel2 import download_sentinel2_batch, download_sentinel2_pass_dates
+from .sentinel2 import download_sentinel2_batch, download_sentinel2_pass_dates, process_sentinel2_directory
 
 
 LOCAL_ENV_KEYS = {
@@ -106,6 +106,16 @@ def build_parser() -> argparse.ArgumentParser:
     sentinel.add_argument("--lake", action="append", help="Limit to a named lake. Repeat for multiple lakes.")
     sentinel.add_argument("--pass-date", action="append", help="Sentinel-2 acquisition/pass date, YYYY-MM-DD. Repeat for multiple dates.")
     sentinel.set_defaults(func=run_sentinel2)
+
+    ndci = subparsers.add_parser("sentinel2-ndci", help="Compute mean NDCI for each downloaded lake-date.")
+    ndci.add_argument("--raw-dir", default="data/raw/sentinel2", help="Sentinel-2 directory containing manifest.csv.")
+    ndci.add_argument("--out", default="data/processed/sentinel2_ndci.csv", help="Lake-date summary CSV.")
+    ndci.add_argument(
+        "--include-nonwater",
+        action="store_true",
+        help="Use every clear valid pixel instead of only SCL water pixels.",
+    )
+    ndci.set_defaults(func=run_sentinel2_ndci)
 
     return parser
 
@@ -203,6 +213,16 @@ def run_sentinel2(args: argparse.Namespace) -> int:
     skipped = sum(1 for result in results if result.skipped)
     mode = "planned" if args.dry_run else "processed"
     print(f"{mode.title()} {len(results)} Sentinel-2 target(s); skipped {skipped}. Manifest: {Path(args.out_dir) / 'manifest.csv'}")
+    return 0
+
+
+def run_sentinel2_ndci(args: argparse.Namespace) -> int:
+    summaries = process_sentinel2_directory(
+        raw_dir=args.raw_dir,
+        out_csv=args.out,
+        water_only=not args.include_nonwater,
+    )
+    print(f"Wrote mean NDCI for {len(summaries)} lake-date(s) to {args.out}")
     return 0
 
 
