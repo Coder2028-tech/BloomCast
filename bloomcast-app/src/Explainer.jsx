@@ -69,7 +69,7 @@ export default function Explainer() {
         <p className="text-slate-600 leading-relaxed">
           BloomCast gives you a week's heads-up on harmful algal bloom risk for
           New Jersey lakes. Here's what that means, what the colors stand for,
-          and where the forecast comes from — in plain terms.
+          and where the forecast comes from in plain terms.
         </p>
       </div>
 
@@ -118,7 +118,7 @@ export default function Explainer() {
             ["Gather", "We pull years of water quality records (chlorophyll, temperature, phosphorus) for monitored NJ lakes from public EPA and NJ DEP sources."],
             ["Learn", "A machine learning model studies how those readings change over time and finds the patterns that tend to come before a rise in algae."],
             ["Forecast", "For each lake, the model projects chlorophyll about a week ahead and translates it into one of the four risk levels."],
-            ["Check", "We validate against real field samples — collecting water and identifying cyanobacteria under a microscope — to confirm the model tracks reality."],
+            ["Check", "We validate against real field samples, collecting water and identifying cyanobacteria under a microscope, to confirm the model tracks reality."],
           ].map(([label, text], i) => (
             <li key={label} className="flex gap-4">
               <span className="text-slate-300 font-mono text-sm font-bold pt-0.5 min-w-[28px]">
@@ -161,7 +161,7 @@ export default function Explainer() {
 
       <div className="rounded-lg bg-slate-50 border border-slate-200 p-4">
         <p className="text-sm text-slate-600 leading-relaxed">
-          BloomCast is a student research project and an experimental forecast — not
+          BloomCast is a student research project and an experimental forecast and not
           an official health advisory. Before entering any water, check the{" "}
           <a
             href="https://dep.nj.gov/hab/"
