@@ -1,0 +1,47 @@
+{
+  "comparison_protocol": "same complete-case rows; lake-held-out test; 7-day target",
+  "held_out_lake": "Lake Hopatcong",
+  "n_train": 11,
+  "n_test": 8,
+  "baseline_features": [
+    "past_chl_a",
+    "past_chl_a_previous",
+    "temp",
+    "phosphorus"
+  ],
+  "nldas_features": [
+    "nldas_air_temp_c",
+    "nldas_cape_jkg",
+    "nldas_longwave_wm2",
+    "nldas_precip_kg_m2",
+    "nldas_shortwave_wm2",
+    "nldas_specific_humidity",
+    "nldas_surface_pressure_pa",
+    "nldas_wind_speed_ms"
+  ],
+  "rf_baseline": {
+    "rmse": 8.34301953494789,
+    "mae": 5.398112667706825,
+    "r2": -0.33363884067247174
+  },
+  "rf_nldas": {
+    "rmse": 8.57289847536779,
+    "mae": 5.399926543103656,
+    "r2": -0.408144021404937
+  },
+  "delta_rmse": 0.22987894041989954,
+  "feature_importance": {
+    "past_chl_a": 0.040288102071440665,
+    "past_chl_a_previous": 0.2035279426715455,
+    "temp": 0.03470355255662287,
+    "phosphorus": 0.338550531764193,
+    "nldas_air_temp_c": 0.01917464921435927,
+    "nldas_cape_jkg": 0.025023585840645467,
+    "nldas_longwave_wm2": 0.01236758802255943,
+    "nldas_precip_kg_m2": 0.01529665077211322,
+    "nldas_shortwave_wm2": 0.08095822697683543,
+    "nldas_specific_humidity": 0.008374308161546272,
+    "nldas_surface_pressure_pa": 0.1570585859119794,
+    "nldas_wind_speed_ms": 0.06467627603615962
+  }
+}
