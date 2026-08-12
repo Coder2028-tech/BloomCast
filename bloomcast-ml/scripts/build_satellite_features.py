@@ -1,4 +1,3 @@
-"""Build historical Sentinel-2 lake-date features without using future scenes."""
 from __future__ import annotations
 
 import argparse

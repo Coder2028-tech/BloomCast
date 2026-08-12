@@ -1,6 +1,6 @@
 import json
-
-import joblib
+import os
+import joblib, os
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
@@ -17,16 +17,13 @@ FEATURE_COLS = [
     "temp_lag1", "temp_lag2",
     "phosphorus",
 ]
-
-
 def add_lag_features(df: pd.DataFrame, n_lags: int = N_LAGS) -> pd.DataFrame:
     df = df.copy()
     for lag in range(1, n_lags + 1):
         df[f"chl_a_lag{lag}"] = df.groupby("lake")["chl_a"].shift(lag)
         df[f"temp_lag{lag}"] = df.groupby("lake")["temp"].shift(lag)
-    df["target_chl_a_next"] = df.groupby("lake")["chl_a"].shift(-1)  # next available sample, not necessarily next week
+    df["target_chl_a_next"] = df.groupby("lake")["chl_a"].shift(-1)
     return df
-
 
 def main():
     df = pd.read_csv(DATA_PATH, parse_dates=["date"])

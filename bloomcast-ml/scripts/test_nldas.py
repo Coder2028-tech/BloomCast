@@ -22,7 +22,6 @@ def main():
         session = earthdata_session()
     except ValueError as e:
         print(f"CREDENTIAL ERROR: {e}")
-        print("Make sure you ran the two `export EARTHDATA_...` commands in THIS terminal.")
         return
 
     try:
