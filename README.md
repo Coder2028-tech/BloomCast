@@ -19,7 +19,7 @@ The project is being developed for the **Congressional App Challenge (CAC)** and
 ## Model
 
 - **Baseline:** Random Forest predicting next-observation chlorophyll-a from lagged chlorophyll-a, water temperature, and phosphorus.
-- **Target framing:** the model predicts the *next available observation*, not a fixed 7-day-ahead forecast — public monitoring is sampled irregularly, so a fixed horizon would misrepresent what the model does.
+- **Target framing:** the model predicts the *next available observation*, not a fixed 7-day-ahead forecast. Public monitoring is sampled irregularly, so a fixed horizon would misrepresent what the model does.
 - **Evaluation:** leave-one-lake-out cross-validation across 17 lakes to test spatial generalization
 
 ## Coverage
