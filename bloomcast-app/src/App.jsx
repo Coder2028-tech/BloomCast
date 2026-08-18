@@ -88,11 +88,18 @@ function Home() {
           </p>
           <p className={`text-3xl font-bold ${style.text}`}>{result.risk_level}</p>
           <p className="text-sm text-slate-500 mt-1">
-            {result.valid_for_days ? `${result.valid_for_days}-day forecast` : "7-day forecast"}
+            {result.valid_for_days ? `${result.valid_for_days}-day forecast` : "Next observation forecast"}
           </p>
            {result.data_as_of && (
       <p className="text-xs text-slate-400 mt-0.5">Based on data from {result.data_as_of}</p>
     )}
+
+    <p className={`text-3xl font-bold ${style.text}`}>{result.risk_level}</p>
+    {result.predicted_chl_a != null && (
+      <p className="text-sm text-slate-600 mt-1">
+        Predicted chlorophyll-a: {result.predicted_chl_a} µg/L
+    </p>
+)}
 
     {result.drivers?.length > 0 && (
       <div className="mt-4 pt-3 border-t border-black/10">
