@@ -1,73 +1,60 @@
 # BloomCast NJ
 
-BloomCast NJ is a multimodal machine learning system that forecasts harmful algal bloom (HAB) risk in New Jersey lakes 7 days in advance, delivered through a public-facing web app. The project combines tabular water quality data, satellite imagery, and atmospheric data to predict bloom risk, and is being developed for both the **Congressional App Challenge (CAC)** and **TNJSF/ISEF** science fair competitions.
+BloomCast NJ is a machine learning system that forecasts harmful algal bloom (HAB) risk in New Jersey lakes, delivered through a public-facing web app. A user enters a NJ zip code or lake name and gets a risk forecast (Safe / Watch / Warning / Danger) for the nearest monitored lake, along with the water-quality drivers behind that forecast.
 
-## Target Lakes
+The project is being developed for the **Congressional App Challenge (CAC)** and the **Terra NJ STEM Fair / ISEF** science fair track.
 
-| Lake | Role |
-|---|---|
-| **Lake Hopatcong** | Primary bloom site (training data) |
-| **Budd Lake** | Secondary bloom site |
-| **Round Valley Reservoir** | Low-bloom control / held-out spatial generalization test |
+## What it does
 
-## Project Structure
+- **Input:** a NJ zip code (mapped to the nearest monitored lake by distance) or a lake name.
+- **Output:** a predicted chlorophyll-a level, classified into a risk tier, plus the recent water-quality values driving the prediction and the date that data is from.
+- **Risk tiers** (chlorophyll-a, µg/L), based on WHO / NJDEP guidance:
+  - Safe < 10 · Watch 10–20 · Warning 20–40 · Danger > 40
+
+## Live app
+
+- Frontend (Vercel): ⚠️ add your Vercel URL
+- API (Render): https://bloomcast-oaco.onrender.com
+
+## Model
+
+- **Baseline:** Random Forest predicting next-observation chlorophyll-a from lagged chlorophyll-a, water temperature, and phosphorus.
+- **Target framing:** the model predicts the *next available observation*, not a fixed 7-day-ahead forecast — public monitoring is sampled irregularly, so a fixed horizon would misrepresent what the model does.
+- **Evaluation:** leave-one-lake-out cross-validation across ⚠️17 lakes to test spatial generalization, plus a persistence baseline for comparison.
+- ⚠️ Add your headline numbers here (e.g. LOLO tier accuracy, RMSE vs. persistence) — only ones you can explain.
+
+## Coverage
+
+The app forecasts for the NJ lakes that have usable water-quality records in the EPA Water Quality Portal. Zip codes are matched to the nearest monitored lake within 15 miles; beyond that, the app reports no local coverage rather than pointing users to a distant lake.
+
+## Project structure
 
 ```
 BloomCast/
-├── bloomcast-ml/       # Data pipelines, feature engineering, model training
-│   ├── scripts/
-│   ├── data/
-│   ├── models/
-│   └── results/
-├── bloomcast-api/      # FastAPI backend serving model predictions
-└── bloomcast-app/      # React frontend (zip code -> risk forecast)
+├── bloomcast-ml/    # Data pipelines, feature engineering, model training
+├── bloomcast-api/   # FastAPI backend serving model predictions
+└── bloomcast-app/   # React frontend (zip / lake name -> risk forecast + map)
 ```
 
-## Current Approach
+## Tech stack
 
-- **Baseline model:** Random Forest predicting next-sample chlorophyll-a from lagged chlorophyll-a, water temperature, and phosphorus. Trained on Lake Hopatcong, evaluated on Round Valley Reservoir as a held-out spatial generalization test.
-- **Planned multimodal model:** ConvLSTM architecture combining satellite imagery (Sentinel-2, via NDCI) and atmospheric data (NLDAS-2) with tabular water quality records.
-- **Field sampling:** Three rounds of in-person sampling (mid-July, mid-August, mid-September) at all three lakes to supplement gaps in public monitoring data.
+- **Frontend:** React, Vite, Tailwind CSS v4, React Router, React-Leaflet / Leaflet (lake map). Deployed on Vercel.
+- **Backend:** FastAPI, uvicorn, scikit-learn, joblib. Deployed on Render.
+- **ML:** Python, pandas, scikit-learn (conda env `bloomcast`).
 
-### Known Data Limitations
-
-- Public water quality records (EPA Water Quality Portal) are sparse for these lakes, especially for Budd Lake, which currently has too few temporally-aligned measurements to build complete feature rows.
-- Nitrogen data returned zero usable rows across all three lakes across all name variants queried via EPA WQP.
-- These gaps motivate the multimodal approach (imagery + atmospheric data) rather than relying on tabular water quality records alone, and are part of why field sampling is a core part of the project rather than a supplementary add-on.
-
-## Contributors
-
-- **Riya Vazirani Laheja** — ML baseline/modeling, React/FastAPI web application
-- **Madhubala Mohanakrishnan** — Data engineering: NLDAS-2 atmospheric pipeline, Sentinel-2 satellite imagery pipeline, field observations
-
-## Dependencies
-
-**ML pipeline** (`bloomcast-ml`) — conda environment `bloomcast`:
-- Python, pandas, scikit-learn, requests
-- See `environment.yml` / `requirements.txt` for the full list
-
-**Backend** (`bloomcast-api`):
-- FastAPI, uvicorn, joblib, scikit-learn
-
-**Frontend** (`bloomcast-app`):
-- React, Vite, Tailwind CSS v4
-
-## Data Sources
+## Data sources
 
 - [EPA Water Quality Portal](https://www.waterqualitydata.us/) — chlorophyll-a, temperature, nutrient measurements
-- [NJ DEP HAB Dashboard](https://njhabs.org/) — official bloom status/tier labels
-- NASA Earthdata / Sentinel Hub — satellite imagery (Sentinel-2)
-- Field sampling — in-person chlorophyll-a, temperature, and phosphorus readings at all three lakes
+- [NJ DEP HAB Dashboard](https://njhabs.org/) — official bloom status / tier labels
+- Zip code coordinates — [SimpleMaps US Zips](https://simplemaps.com/data/us-zips)
+- ⚠️ List any others you actually use (Sentinel-2, NLDAS-2, field sampling) — only if they're part of what's built
 
-## Running Locally
+## Known data limitations
 
-**ML pipeline:**
-```bash
-cd bloomcast-ml
-conda activate bloomcast
-python scripts/fetch_wqp_data.py       # pull latest water quality data
-python scripts/train_baseline.py       # train + evaluate the RF baseline
-```
+- Public water-quality records are sparse for some lakes, and sampling is irregular, so some lakes' most recent data is several years old. The app surfaces the data date on each forecast so this is visible rather than hidden.
+- ⚠️ Add any other honest caveats (e.g. specific lakes with thin data).
+
+## Running locally
 
 **Backend:**
 ```bash
@@ -83,6 +70,18 @@ npm install
 npm run dev
 ```
 
-## License
+**ML pipeline:**
+```bash
+cd bloomcast-ml
+conda activate bloomcast
+python scripts/fetch_wqp_data.py
+python scripts/train_baseline.py
+```
 
+## Contributors
+
+- **Riya Vazirani Laheja** — ML modeling, React/FastAPI web application
+- **Madhubala Mohanakrishnan** — Data engineering (data pipelines, satellite/atmospheric ETL)
+
+## License
 TBD
