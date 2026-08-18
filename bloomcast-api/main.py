@@ -1,5 +1,6 @@
 import csv
 import json
+import math
 from pathlib import Path
 
 import joblib
@@ -14,6 +15,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+ZIP_COORDS_PATH = Path(__file__).parent / "model" / "uszips.csv"
+
+ZIP_COORDS = {}
+with open(ZIP_COORDS_PATH, newline="") as f:
+    for row in csv.DictReader(f):
+        z = row["zip"]
+        if z.startswith("07") or z.startswith("08"):
+            ZIP_COORDS[z] = (float(row["lat"]), float(row["lng"]))
 
 MODEL_PATH = Path(__file__).parent / "model" / "rf_baseline.pkl"
 LAKE_STATE_PATH = Path(__file__).parent / "model" / "latest_lake_state.json"
@@ -32,22 +42,6 @@ with open(LAKE_TARGETS_PATH, newline="") as f:
             LAKE_COORDS[row["name"]] = {"lat": float(lat), "long": float(lon)}
 
 FEATURE_ORDER = ["chl_a_lag1", "chl_a_lag2", "temp_lag1", "temp_lag2", "phosphorus"]
-
-
-ZIP_TO_LAKE = {
-    "07849": "Lake Hopatcong",
-    "07843": "Lake Hopatcong",
-    "07850": "Lake Hopatcong",
-    "07874": "Lake Hopatcong",
-    "07857": "Lake Hopatcong",
-    "07852": "Lake Hopatcong",
-    "07828": "Budd Lake",
-    "07836": "Budd Lake",
-    "08833": "Round Valley Reservoir",
-    "08801": "Round Valley Reservoir",
-    "08809": "Round Valley Reservoir",
-}
-
 
 def classify_risk(chl_a_prediction: float) -> str:
     if chl_a_prediction < 10:
@@ -78,10 +72,6 @@ def health():
 
 @app.get("/lakes")
 def lakes():
-    """Return every lake that has coordinates, with its current risk level.
-    Lakes without enough data to forecast are flagged has_data=False so the
-    frontend can render them gray ('insufficient data') instead of implying
-    a confident forecast."""
     result = []
     for lake, coords in LAKE_COORDS.items():
         risk_level, predicted = predict_for_lake(lake)
@@ -97,9 +87,29 @@ def lakes():
             "data_as_of": lake_features.get("as_of_date"),
         })
     return {"lakes": result}
+def _band(value, bands):
+    for upper, label in bands:
+        if upper is None or value < upper:
+            return label
+    return bands[-1][1]
 
+CHL_BANDS  = [(10, "low"), (20, "elevated"), (40, "high"), (None, "very high")]
+TEMP_BANDS = [(15, "cool"), (22, "moderate"), (28, "warm"), (None, "very warm")]
+PHOS_BANDS = [(0.02, "low"), (0.05, "moderate"), (None, "high")]
 
-@app.get("/forecast/{zip_code}")
+def build_drivers(state: dict) -> list[dict]:
+    drivers = []
+    chl = state.get("chl_a_lag1")
+    if chl is not None:
+        drivers.append({"label": "Recent chlorophyll-a", "value": f"{chl:.1f} µg/L", "note": _band(chl, CHL_BANDS)})
+    temp = state.get("temp_lag1")
+    if temp is not None:
+        drivers.append({"label": "Water temperature", "value": f"{temp:.1f}°C", "note": _band(temp, TEMP_BANDS)})
+    phos = state.get("phosphorus")
+    if phos is not None:
+        drivers.append({"label": "Phosphorus", "value": f"{phos:.3f} mg/L", "note": _band(phos, PHOS_BANDS)})
+    return drivers
+
 def forecast(zip_code: str):
     lake = ZIP_TO_LAKE.get(zip_code)
 
@@ -125,4 +135,75 @@ def forecast(zip_code: str):
         "predicted_chl_a": predicted,
         "data_as_of": lake_features.get("as_of_date"),
         "valid_for_days": 7,
+        "drivers": build_drivers(lake_features),
     }
+def find_lake_by_name(query: str):
+    q = query.strip().lower()
+    for lake in LAKE_STATE:
+        if lake.lower() == q:
+            return lake
+    matches = [lake for lake in LAKE_STATE if q in lake.lower()]
+    if len(matches) == 1:
+        return matches[0]
+    else:
+        return None
+
+def build_forecast(lake, zip_code=None):
+    risk_level, predicted = predict_for_lake(lake)
+    if risk_level is None:
+        resp = {"lake_name": lake,
+                "error": f"Not enough recent data available for {lake} to make a forecast yet."}
+    else:
+        lake_features = LAKE_STATE.get(lake, {})
+        resp = {
+            "lake_name": lake,
+            "risk_level": risk_level,
+            "predicted_chl_a": predicted,
+            "data_as_of": lake_features.get("as_of_date"),
+            "valid_for_days": 7,
+            "drivers": build_drivers(lake_features),
+        }
+    if zip_code is not None:
+        resp["zip_code"] = zip_code
+    return resp
+
+@app.get("/forecast/{zip_code}")
+def forecast(zip_code: str):
+    lake, distance = nearest_lake(zip_code)
+    if lake is None:
+        return {"zip_code": zip_code,
+                "error": "No monitored lakes within 15 miles of your area yet."}
+    resp = build_forecast(lake, zip_code=zip_code)
+    resp["distance_miles"] = distance
+    return resp
+
+
+@app.get("/lake/{lake_name}")
+def forecast_by_name(lake_name: str):
+    lake = find_lake_by_name(lake_name)
+    if lake is None:
+        return {"error": f"No lake matching '{lake_name}'. Try the full lake name."}
+    return build_forecast(lake)
+
+def _haversine_miles(lat1, lon1, lat2, lon2):
+    R = 3958.8 
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp = math.radians(lat2 - lat1)
+    dl = math.radians(lon2 - lon1)
+    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return R * 2 * math.asin(math.sqrt(a))
+
+def nearest_lake(zip_code: str, max_miles: float = 15.0):
+    if zip_code not in ZIP_COORDS:
+        return None, None
+    zlat, zlon = ZIP_COORDS[zip_code]
+    best, best_dist = None, None
+    for lake, c in LAKE_COORDS.items():
+        if lake not in LAKE_STATE:
+            continue
+        d = _haversine_miles(zlat, zlon, c["lat"], c["long"])
+        if best_dist is None or d < best_dist:
+            best, best_dist = lake, d
+    if best_dist is not None and best_dist <= max_miles:
+        return best, round(best_dist, 1)
+    return None, None
