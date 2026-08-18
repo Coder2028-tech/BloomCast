@@ -13,15 +13,14 @@ The project is being developed for the **Congressional App Challenge (CAC)** and
 
 ## Live app
 
-- Frontend (Vercel): ⚠️ add your Vercel URL
+- Frontend (Vercel): https://bloom-cast.vercel.app/
 - API (Render): https://bloomcast-oaco.onrender.com
 
 ## Model
 
 - **Baseline:** Random Forest predicting next-observation chlorophyll-a from lagged chlorophyll-a, water temperature, and phosphorus.
 - **Target framing:** the model predicts the *next available observation*, not a fixed 7-day-ahead forecast — public monitoring is sampled irregularly, so a fixed horizon would misrepresent what the model does.
-- **Evaluation:** leave-one-lake-out cross-validation across ⚠️17 lakes to test spatial generalization, plus a persistence baseline for comparison.
-- ⚠️ Add your headline numbers here (e.g. LOLO tier accuracy, RMSE vs. persistence) — only ones you can explain.
+- **Evaluation:** leave-one-lake-out cross-validation across 17 lakes to test spatial generalization
 
 ## Coverage
 
@@ -47,12 +46,12 @@ BloomCast/
 - [EPA Water Quality Portal](https://www.waterqualitydata.us/) — chlorophyll-a, temperature, nutrient measurements
 - [NJ DEP HAB Dashboard](https://njhabs.org/) — official bloom status / tier labels
 - Zip code coordinates — [SimpleMaps US Zips](https://simplemaps.com/data/us-zips)
-- ⚠️ List any others you actually use (Sentinel-2, NLDAS-2, field sampling) — only if they're part of what's built
 
 ## Known data limitations
 
 - Public water-quality records are sparse for some lakes, and sampling is irregular, so some lakes' most recent data is several years old. The app surfaces the data date on each forecast so this is visible rather than hidden.
-- ⚠️ Add any other honest caveats (e.g. specific lakes with thin data).
+- The specific data qualities that are evaluated in this model are limited or sparse for certain lakes
+
 
 ## Running locally
 
