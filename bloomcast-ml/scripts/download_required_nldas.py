@@ -1,4 +1,3 @@
-"""Checkpointed downloader for the NLDAS windows required by training labels."""
 from __future__ import annotations
 
 import argparse

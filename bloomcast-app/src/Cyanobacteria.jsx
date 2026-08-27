@@ -8,7 +8,7 @@ const SAMPLES = [
     statusClass: "bg-amber-100 text-amber-800",
     conditions: "25.4°C water · pH 7.4 · moderate wind",
     finding: "Cyanobacteria observed; rare relative density (1 of 4).",
-    interpretation: "The field record and microscope capture support treating the site as an early caution signal—not a toxin confirmation.",
+    interpretation: "The field record and microscope capture support treating the site as an early caution signal, not a toxin confirmation.",
     images: [
       { src: "/field-research/lhshore1.jpg", alt: "Lake Hopatcong shoreline sampling location", caption: "Shoreline context" },
       { src: "/field-research/lhshore2.jpg", alt: "Close view of water at the Lake Hopatcong shoreline", caption: "Near-shore water" },
@@ -67,9 +67,9 @@ export default function Cyanobacteria() {
     <main className="w-full max-w-3xl mx-auto mt-16 px-4 sm:px-1 pb-16">
       <header className="mb-10">
         <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">
-          Bloom science · Field study I
+          Bloom science · Field study 1
         </p>
-        <h1 className="text-2xl font-bold text-slate-800 mb-3">Cyanobacteria &amp; Field Research</h1>
+        <h1 className="text-2xl font-bold text-slate-800 mb-3">Cyanobacteria and Field Research</h1>
         <p className="text-slate-600 leading-relaxed max-w-2xl">
           Cyanobacteria are a natural part of freshwater ecosystems. In warm,
           nutrient-rich, calm conditions they can multiply into harmful algal blooms.
@@ -98,7 +98,7 @@ export default function Cyanobacteria() {
 
       <section aria-labelledby="visit-heading" className="mb-12">
         <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">July 11, 2026 · Three monitored lakes</p>
-        <h2 id="visit-heading" className="text-xl font-bold text-slate-800 mb-2">Field Visit I: what we recorded</h2>
+        <h2 id="visit-heading" className="text-xl font-bold text-slate-800 mb-2">Field Visit 1: What we recorded</h2>
         <p className="text-sm text-slate-600 leading-relaxed mb-6">
           The same-day comparison combined water chemistry, site conditions, official status, and microscope review. These are field observations—not toxin results or health clearances.
         </p>

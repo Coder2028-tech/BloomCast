@@ -84,7 +84,7 @@ function Home() {
         </button>
       </form>
       <p aria-live="polite" className="text-xs text-slate-400 mb-6 min-h-4">
-        {loading ? "Getting the latest available forecast…" : "Experimental forecast—always verify official conditions."}
+        {loading ? "Getting the latest available forecast…" : "Experimental forecast (always verify official conditions)."}
       </p>
 
       {result && !result.error && style && (

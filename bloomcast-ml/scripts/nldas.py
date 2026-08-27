@@ -1,4 +1,3 @@
-"""NLDAS-2 URL construction and resilient NASA Earthdata downloads."""
 from __future__ import annotations
 
 import os
@@ -18,8 +17,6 @@ ALLOWED_AUTH_HOSTS = {AUTH_HOST, "hydro1.gesdisc.eosdis.nasa.gov", "data.gesdisc
 
 
 class EarthdataSession(requests.Session):
-    """Preserve Earthdata credentials only across NASA's known redirect hosts."""
-
     def rebuild_auth(self, prepared_request, response) -> None:
         original = requests.utils.urlparse(response.request.url).hostname
         redirect = requests.utils.urlparse(prepared_request.url).hostname
@@ -36,7 +33,7 @@ def earthdata_session(token: Optional[str] = None, username: Optional[str] = Non
     if not token and bool(username) != bool(password):
         raise ValueError("Set EARTHDATA_TOKEN, or both EARTHDATA_USERNAME and EARTHDATA_PASSWORD.")
     session = EarthdataSession()
-    session.trust_env = True  # permits .netrc when explicit credentials are absent
+    session.trust_env = True
     session.headers.update({"User-Agent": "BloomCastNJ/0.2", "Accept": "application/x-netcdf,application/octet-stream"})
     if token:
         session.headers["Authorization"] = f"Bearer {token}"
@@ -51,8 +48,6 @@ class NldasProduct:
     short_name: str = "NLDAS_FORA0125_H"
     version: str = "2.0"
     file_version: str = "020"
-    # GES DISC collection 2.0 currently serves these as .020.nc. The collection
-    # version remains 2.0, while the filename version is the zero-padded 020.
     extension: str = "nc"
 
     @property
@@ -100,7 +95,6 @@ def download_file(url: str, destination: str | Path, session: requests.Session,
             with session.get(url, stream=True, allow_redirects=True, timeout=(30, 180)) as response:
                 if response.status_code in {401, 403}:
                     raise RuntimeError("Earthdata authorization failed. Generate a token and set EARTHDATA_TOKEN; do not commit it.")
-                # GES DISC/CDN has occasionally returned transient 404s for known files.
                 if response.status_code == 404 and attempt < attempts:
                     raise requests.HTTPError("Transient 404", response=response)
                 response.raise_for_status()
@@ -122,7 +116,6 @@ def download_file(url: str, destination: str | Path, session: requests.Session,
                 break
             time.sleep(min(2 ** (attempt - 1), 16))
     raise RuntimeError(f"Failed to download {url} after {attempts} attempts: {last_error}") from last_error
-
 
 def download_nldas_range(start: datetime, end: datetime, out_dir: str | Path,
                          product: NldasProduct = NldasProduct(), session=None,

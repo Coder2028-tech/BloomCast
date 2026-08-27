@@ -1,4 +1,3 @@
-"""Extract daily lake-level NLDAS-2 forcing features from hourly NetCDF files."""
 from __future__ import annotations
 
 import argparse

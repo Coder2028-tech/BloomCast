@@ -5,14 +5,13 @@ import "leaflet/dist/leaflet.css";
 const API_BASE = "https://bloomcast-oaco.onrender.com";
 
 const RISK_COLORS = {
-  Safe: "#059669",     // emerald
-  Watch: "#d97706",    // amber
-  Warning: "#ea580c",  // orange
-  Danger: "#dc2626",   // red
+  Safe: "#059669",   
+  Watch: "#d97706",   
+  Warning: "#ea580c", 
+  Danger: "#dc2626",  
 };
-const NO_DATA_COLOR = "#9ca3af"; // gray
+const NO_DATA_COLOR = "#9ca3af";
 
-// Center roughly on north-central NJ where most monitored lakes cluster
 const NJ_CENTER = [40.75, -74.6];
 
 export default function LakeMap() {
@@ -112,7 +111,7 @@ export default function LakeMap() {
           </div>
 
           <p className="text-xs text-slate-400 mt-3">
-            Experimental forecast — not an official health advisory. For current bloom status, check the{" "}
+            Experimental forecast (not an official health advisory). For current bloom status, check the{" "}
             <a
               href="https://dep.nj.gov/hab/"
               target="_blank"

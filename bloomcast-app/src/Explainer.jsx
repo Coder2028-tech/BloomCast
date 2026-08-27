@@ -42,7 +42,7 @@ const FAQS = [
   },
   {
     q: "Why chlorophyll instead of measuring the toxins?",
-    a: "Toxin testing needs a lab and a physical water sample, so it can only tell you about a bloom that is already happening. Chlorophyll can be estimated from monitoring data and satellite imagery, which lets us look ahead instead of only reacting. The tradeoff is that chlorophyll reflects all algae, not only the toxic kind — so we treat a high reading as a reason for caution, not a confirmed toxin level.",
+    a: "Toxin testing needs a lab and a physical water sample, so it can only tell you about a bloom that is already happening. Chlorophyll can be estimated from monitoring data and satellite imagery, which lets us look ahead instead of only reacting. The tradeoff is that chlorophyll reflects all algae, not only the toxic kind, so we treat a high reading as a reason for caution, not a confirmed toxin level.",
   },
   {
     q: "How accurate is this?",

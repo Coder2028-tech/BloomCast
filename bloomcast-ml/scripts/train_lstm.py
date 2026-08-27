@@ -68,7 +68,6 @@ def main():
     X_all_train, y_all_train = X[train_mask], y_log[train_mask]
     X_test, y_test_log = X[test_mask], y_log[test_mask]
 
-    # carve a validation slice out of the training data (shuffled)
     rng = np.random.default_rng(SEED)
     order = rng.permutation(len(X_all_train))
     n_val = max(1, int(len(order) * VAL_FRACTION))

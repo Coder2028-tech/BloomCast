@@ -1,4 +1,3 @@
-"""Build leakage-safe lake-date rows for next-week chlorophyll prediction."""
 from __future__ import annotations
 
 import argparse
