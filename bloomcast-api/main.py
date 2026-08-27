@@ -2,12 +2,24 @@ import csv
 import json
 import math
 from pathlib import Path
+import os
 
 import joblib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from db import engine
+from sqlalchemy import text
+
+try:
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+    print("Database connection works")
+except Exception as e:
+    print("Database connection failed:", e)
+
 app = FastAPI(title="BloomCast NJ API")
+
 
 app.add_middleware(
     CORSMiddleware,
