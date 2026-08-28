@@ -18,6 +18,7 @@ function NavBar() {
       <NavLink to="/" className={linkClass} end>Forecast</NavLink>
       <NavLink to="/about" className={linkClass}>How it works</NavLink>
       <NavLink to="/field-research" className={linkClass}>Bloom science</NavLink>
+      <NavLink to="/community" className={linkClass}>Community</NavLink>
     </nav>
   );
 }
@@ -148,6 +149,7 @@ export default function App() {
           <Route path="/about" element={<Explainer />} />
           <Route path="/field-research" element={<Cyanobacteria />} />
           <Route path="/cyanobacteria" element={<Navigate to="/field-research" replace />} />
+          <Route path="/community" element={<Community />} />
         </Routes>
       </Suspense>
     </div>
