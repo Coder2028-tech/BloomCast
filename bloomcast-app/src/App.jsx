@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import Community from "./Community";
 
 const LakeMap = lazy(() => import("./LakeMap"));
 const Explainer = lazy(() => import("./Explainer"));
