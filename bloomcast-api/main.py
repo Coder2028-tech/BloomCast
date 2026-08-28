@@ -18,9 +18,6 @@ from auth import hash_password, verify_password, create_token, get_user_id_from_
 app = FastAPI(title="BloomCast NJ API")
 from models import create_tables
 
-VALID_LAKES = set(LAKE_STATE.keys())
-ADMIN_KEY = os.getenv("ADMIN_KEY")
-
 class NewPost(BaseModel):
     lake_name: str
     body: str
@@ -197,6 +194,9 @@ LAKE_TARGETS_PATH = Path(__file__).parent / "model" / "lake_targets.csv"
 rf_model = joblib.load(MODEL_PATH)
 with open(LAKE_STATE_PATH) as f:
     LAKE_STATE = json.load(f)
+
+VALID_LAKES = set(LAKE_STATE.keys())
+ADMIN_KEY = os.getenv("ADMIN_KEY")
 
 LAKE_COORDS = {}
 with open(LAKE_TARGETS_PATH, newline="") as f:
