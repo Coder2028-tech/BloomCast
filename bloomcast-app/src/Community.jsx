@@ -25,7 +25,7 @@ export default function Community() {
       <h1 className="text-2xl font-bold text-slate-800 mb-1">Community Observations</h1>
       <p className="text-sm text-slate-500 mb-6">
         Share what you've seen at NJ lakes. Posts are reviewed before appearing.
-        Community reports are unverified observations — the model forecast is the
+        Community reports are unverified observations, the model forecast is the
         authoritative signal.
       </p>
 
