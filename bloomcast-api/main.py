@@ -18,6 +18,16 @@ from auth import hash_password, verify_password, create_token, get_user_id_from_
 app = FastAPI(title="BloomCast NJ API")
 from models import create_tables
 
+
+def require_user(authorization: str | None = Header(default=None)) -> int:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not logged in")
+    token = authorization.split(" ", 1)[1]
+    user_id = get_user_id_from_token(token)
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return user_id
+
 class NewPost(BaseModel):
     lake_name: str
     body: str
@@ -135,15 +145,6 @@ class SignupBody(BaseModel):
 class LoginBody(BaseModel):
     username: str
     password: str
-
-def require_user(authorization: str | None = Header(default=None)) -> int:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Not logged in")
-    token = authorization.split(" ", 1)[1]
-    user_id = get_user_id_from_token(token)
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return user_id
 
 @app.post("/signup")
 def signup(body: SignupBody):
