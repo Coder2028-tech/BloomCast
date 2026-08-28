@@ -4,21 +4,125 @@ import math
 from pathlib import Path
 import os
 import joblib
+from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db import engine
 from sqlalchemy import text
-from fastapi import Header, HTTPException
+from fastapi import Header, HTTPException, Depends
 from pydantic import BaseModel
 from db import SessionLocal
-from models import User
+from models import User, Post
 from auth import hash_password, verify_password, create_token, get_user_id_from_token
 
 app = FastAPI(title="BloomCast NJ API")
 from models import create_tables
 
+VALID_LAKES = set(LAKE_STATE.keys())
+ADMIN_KEY = os.getenv("ADMIN_KEY")
+
+class NewPost(BaseModel):
+    lake_name: str
+    body: str
+
 create_tables()
 print("Tables were created")
+
+@app.post("/posts")
+def create_post(post: NewPost, user_id: int = Depends(require_user)):
+    """Create a post. Requires login. Starts unapproved (moderation gate)."""
+    lake = post.lake_name.strip()
+    body = post.body.strip()
+    if lake not in VALID_LAKES:
+        raise HTTPException(status_code=400, detail="Unknown lake")
+    if not body:
+        raise HTTPException(status_code=400, detail="Post can't be empty")
+    if len(body) > 1000:
+        raise HTTPException(status_code=400, detail="Post too long (max 1000 chars)")
+ 
+    db = SessionLocal()
+    try:
+        new = Post(user_id=user_id, lake_name=lake, body=body, approved=False)
+        db.add(new)
+        db.commit()
+        db.refresh(new)
+        return {"success": True, "id": new.id,
+                "message": "Submitted! Your post will appear once reviewed."}
+    finally:
+        db.close()
+ 
+ 
+@app.get("/posts")
+def list_posts(lake: str | None = None):
+    """Public feed: only APPROVED posts. Optionally filter by lake."""
+    db = SessionLocal()
+    try:
+        q = db.query(Post, User).join(User, Post.user_id == User.id).filter(Post.approved == True)
+        if lake:
+            q = q.filter(Post.lake_name == lake.strip())
+        q = q.order_by(Post.created_at.desc())
+        results = []
+        for post, user in q.all():
+            results.append({
+                "id": post.id,
+                "username": user.username,
+                "lake_name": post.lake_name,
+                "body": post.body,
+                "created_at": post.created_at.isoformat(),
+            })
+        return {"posts": results}
+    finally:
+        db.close()
+  
+def require_admin(x_admin_key: str | None = Header(default=None)):
+    if not ADMIN_KEY or x_admin_key != ADMIN_KEY:
+        raise HTTPException(status_code=403, detail="Admin access required")
+ 
+ 
+@app.get("/posts/pending")
+def pending_posts(x_admin_key: str | None = Header(default=None)):
+    require_admin(x_admin_key)
+    db = SessionLocal()
+    try:
+        q = (db.query(Post, User).join(User, Post.user_id == User.id)
+             .filter(Post.approved == False).order_by(Post.created_at.desc()))
+        return {"pending": [
+            {"id": p.id, "username": u.username, "lake_name": p.lake_name,
+             "body": p.body, "created_at": p.created_at.isoformat()}
+            for p, u in q.all()
+        ]}
+    finally:
+        db.close()
+ 
+ 
+@app.post("/posts/{post_id}/approve")
+def approve_post(post_id: int, x_admin_key: str | None = Header(default=None)):
+    require_admin(x_admin_key)
+    db = SessionLocal()
+    try:
+        post = db.query(Post).filter(Post.id == post_id).first()
+        if not post:
+            raise HTTPException(status_code=404, detail="Post not found")
+        post.approved = True
+        db.commit()
+        return {"success": True, "id": post_id, "approved": True}
+    finally:
+        db.close()
+ 
+ 
+@app.delete("/posts/{post_id}")
+def delete_post(post_id: int, x_admin_key: str | None = Header(default=None)):
+    require_admin(x_admin_key)
+    db = SessionLocal()
+    try:
+        post = db.query(Post).filter(Post.id == post_id).first()
+        if not post:
+            raise HTTPException(status_code=404, detail="Post not found")
+        db.delete(post)
+        db.commit()
+        return {"success": True, "deleted": post_id}
+    finally:
+        db.close()
 
 app.add_middleware(
     CORSMiddleware,
