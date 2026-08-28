@@ -31,5 +31,4 @@ class Post(Base):
 
 
 def create_tables():
-    """Create the tables in Postgres if they don't already exist."""
     Base.metadata.create_all(bind=engine)

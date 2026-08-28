@@ -3,13 +3,16 @@ import json
 import math
 from pathlib import Path
 import os
-
 import joblib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from db import engine
 from sqlalchemy import text
+from fastapi import Header, HTTPException
+from pydantic import BaseModel
+from db import SessionLocal
+from models import User
+from auth import hash_password, verify_password, create_token, get_user_id_from_token
 
 app = FastAPI(title="BloomCast NJ API")
 from models import create_tables
@@ -23,6 +26,56 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class SignupBody(BaseModel):
+    username: str
+    password: str
+ 
+class LoginBody(BaseModel):
+    username: str
+    password: str
+
+def require_user(authorization: str | None = Header(default=None)) -> int:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not logged in")
+    token = authorization.split(" ", 1)[1]
+    user_id = get_user_id_from_token(token)
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return user_id
+
+@app.post("/signup")
+def signup(body: SignupBody):
+    username = body.username.strip()
+    password = body.password
+    if not username or not password:
+        raise HTTPException(status_code=400, detail="Username and password required")
+ 
+    db = SessionLocal()
+    try:
+        existing = db.query(User).filter(User.username == username).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already taken")
+        user = User(username=username, password_hash=hash_password(password))
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        token = create_token(user.id)
+        return {"token": token, "username": user.username}
+    finally:
+        db.close()
+ 
+@app.post("/login")
+def login(body: LoginBody):
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.username == body.username.strip()).first()
+        if not user or not verify_password(body.password, user.password_hash):
+            raise HTTPException(status_code=401, detail="Invalid username or password")
+        token = create_token(user.id)
+        return {"token": token, "username": user.username}
+    finally:
+        db.close()
 
 ZIP_COORDS_PATH = Path(__file__).parent / "model" / "uszips.csv"
 
@@ -61,10 +114,7 @@ def classify_risk(chl_a_prediction: float) -> str:
     else:
         return "Danger"
 
-
 def predict_for_lake(lake: str):
-    """Return (risk_level, predicted_chl_a) for a lake, or (None, None) if
-    there isn't enough data in LAKE_STATE to make a prediction."""
     lake_features = LAKE_STATE.get(lake)
     if lake_features is None:
         return None, None
@@ -72,11 +122,9 @@ def predict_for_lake(lake: str):
     prediction = float(rf_model.predict(X)[0])
     return classify_risk(prediction), round(prediction, 2)
 
-
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": rf_model is not None}
-
 
 @app.get("/lakes")
 def lakes():
