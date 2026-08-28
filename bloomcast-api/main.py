@@ -64,7 +64,13 @@ def signup(body: SignupBody):
         return {"token": token, "username": user.username}
     finally:
         db.close()
- 
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password[:72])
+
+def verify_password(password: str, password_hash: str) -> bool:
+    return pwd_context.verify(password[:72], password_hash)
+
 @app.post("/login")
 def login(body: LoginBody):
     db = SessionLocal()
