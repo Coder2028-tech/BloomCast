@@ -11,15 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from db import engine
 from sqlalchemy import text
 
-try:
-    with engine.connect() as conn:
-        conn.execute(text("SELECT 1"))
-    print("Database connection works")
-except Exception as e:
-    print("Database connection failed:", e)
-
 app = FastAPI(title="BloomCast NJ API")
+from models import create_tables
 
+create_tables()
+print("Tables were created")
 
 app.add_middleware(
     CORSMiddleware,
