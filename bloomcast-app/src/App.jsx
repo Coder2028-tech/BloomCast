@@ -9,12 +9,15 @@ const Cyanobacteria = lazy(() => import("./Cyanobacteria"));
 function NavBar() {
   const linkClass = ({ isActive }) =>
     `px-3 py-2 text-sm font-medium rounded-lg transition ${
-      isActive ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-200"
+      isActive ? "bg-teal-700 text-white" : "text-slate-600 hover:bg-teal-50 hover:text-teal-800"
     }`;
 
   return (
-    <nav aria-label="Primary navigation" className="w-full flex flex-wrap items-center gap-1 sm:gap-2 px-4 py-3 border-b border-slate-200 bg-white">
-      <NavLink to="/" className="font-bold text-slate-800 mr-auto sm:mr-4">BloomCast NJ</NavLink>
+    <nav aria-label="Primary navigation" className="w-full flex flex-wrap items-center gap-1 sm:gap-2 px-4 py-3 border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-[1000]">
+      <NavLink to="/" className="flex items-center gap-2 mr-auto sm:mr-4">
+        <span aria-hidden="true" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-700 text-white text-sm">≈</span>
+        <span className="font-bold text-slate-800">BloomCast <span className="text-teal-700">NJ</span></span>
+      </NavLink>
       <NavLink to="/" className={linkClass} end>Forecast</NavLink>
       <NavLink to="/about" className={linkClass}>How it works</NavLink>
       <NavLink to="/field-research" className={linkClass}>Bloom science</NavLink>
@@ -63,10 +66,10 @@ function Home() {
   const style = result?.risk_level ? RISK_STYLES[result.risk_level] : null;
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="text-2xl font-bold mb-1 text-slate-800">BloomCast NJ</h1>
-      <p className="text-sm text-slate-500 mb-1">Harmful algal bloom risk forecast</p>
-      <p className="text-sm font-semibold text-emerald-700 mb-6">Check before you go.</p>
+    <div className="flex flex-col items-center justify-center px-4 pt-10 pb-4">
+      <h1 className="text-3xl font-bold mb-1 text-slate-800">BloomCast <span className="text-teal-700">NJ</span></h1>
+      <p className="text-sm text-slate-500 mb-1">Harmful algal bloom risk forecast for New Jersey lakes</p>
+      <p className="text-sm font-semibold text-teal-700 mb-6">Check before you go.</p>
 
       <form id="check-before-you-go" onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 mb-2 w-full sm:w-auto">
         <label htmlFor="lake-search" className="sr-only">New Jersey ZIP code or lake name</label>
@@ -75,12 +78,12 @@ function Home() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Enter NJ zip code or lake name"
-          className="px-4 py-2 rounded-lg border border-slate-300 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          className="px-4 py-2 rounded-lg border border-slate-300 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 rounded-lg bg-slate-800 text-white font-medium hover:bg-slate-700 disabled:opacity-50 transition"
+          className="px-4 py-2 rounded-lg bg-teal-700 text-white font-medium hover:bg-teal-800 disabled:opacity-50 transition shadow-sm"
         >
           {loading ? "Checking…" : "Check lake risk"}
         </button>
@@ -90,7 +93,7 @@ function Home() {
       </p>
 
       {result && !result.error && style && (
-        <div className={`rounded-2xl p-6 w-72 ring-2 ${style.ring} ${style.bg}`}>
+        <div className={`rounded-2xl p-6 w-72 ring-2 shadow-sm ${style.ring} ${style.bg}`}>
           <p className="text-xs text-slate-500">Nearest monitored lake</p>
           <p className="text-sm font-medium text-slate-700">
             {result.lake_name}
@@ -141,7 +144,7 @@ function Home() {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-slate-50 to-slate-50">
       <NavBar />
       <Suspense fallback={<div className="w-full max-w-3xl mx-auto mt-16 px-4 text-sm text-slate-500">Loading…</div>}>
         <Routes>
