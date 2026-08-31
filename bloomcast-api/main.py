@@ -40,8 +40,10 @@ def create_post(post: NewPost, user_id: int = Depends(require_user)):
     """Create a post. Requires login. Starts unapproved (moderation gate)."""
     lake = post.lake_name.strip()
     body = post.body.strip()
-    if lake not in VALID_LAKES:
-        raise HTTPException(status_code=400, detail="Unknown lake")
+    if not lake:
+        raise HTTPException(status_code=400, detail="Please enter a lake name")
+    if len(lake) > 120:
+        raise HTTPException(status_code=400, detail="Lake name too long")
     if not body:
         raise HTTPException(status_code=400, detail="Post can't be empty")
     if len(body) > 1000:
@@ -196,7 +198,6 @@ rf_model = joblib.load(MODEL_PATH)
 with open(LAKE_STATE_PATH) as f:
     LAKE_STATE = json.load(f)
 
-VALID_LAKES = set(LAKE_STATE.keys())
 ADMIN_KEY = os.getenv("ADMIN_KEY")
 
 LAKE_COORDS = {}

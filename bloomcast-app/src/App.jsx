@@ -15,7 +15,7 @@ function NavBar() {
   return (
     <nav aria-label="Primary navigation" className="w-full flex flex-wrap items-center gap-1 sm:gap-2 px-4 py-3 border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-[1000]">
       <NavLink to="/" className="flex items-center gap-2 mr-auto sm:mr-4">
-        <span aria-hidden="true" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-700 text-white text-sm">≈</span>
+        <img src="/favicon.svg" alt="BloomCast logo" className="h-7 w-7" />
         <span className="font-bold text-slate-800">BloomCast <span className="text-teal-700">NJ</span></span>
       </NavLink>
       <NavLink to="/" className={linkClass} end>Forecast</NavLink>

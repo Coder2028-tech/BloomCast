@@ -124,7 +124,6 @@ function AuthForm({ onAuth }) {
 function LoggedIn({ username, token, onLogout }) {
   const [lake, setLake] = useState("");
   const [body, setBody] = useState("");
-  const [lakes, setLakes] = useState([]);
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -177,22 +176,18 @@ function LoggedIn({ username, token, onLogout }) {
       </div>
 
       <div className="space-y-3">
-        <select
+        <input
           value={lake}
           onChange={(e) => setLake(e.target.value)}
+          placeholder="Which lake? (e.x. Lake Hopatcong)"
           className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
-        >
-          <option value="">Select a lake…</option>
-          {lakes.map((name) => (
-            <option key={name} value={name}>{name}</option>
-          ))}
-        </select>
+        />
         <textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={3}
           maxLength={1000}
-          placeholder="What did you observe? (e.g. green water, dead fish, a posted warning sign)"
+          placeholder="What did you observe? (e.x. green water, dead fish, a posted warning sign)"
           className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         {status?.error && <p className="text-sm text-red-600">{status.error}</p>}
@@ -211,13 +206,6 @@ function LoggedIn({ username, token, onLogout }) {
 
 function Feed() {
   const [posts, setPosts] = useState(null);
-
-  useEffect(() => {
-    fetch(`${API_BASE}/posts`)
-      .then((r) => r.json())
-      .then((d) => setPosts(d.posts || []))
-      .catch(() => setPosts([]));
-  }, []);
 
   if (posts === null) {
     return <p className="text-sm text-slate-400">Loading observations…</p>;
