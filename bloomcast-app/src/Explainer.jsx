@@ -60,7 +60,7 @@ export default function Explainer() {
   return (
     <div className="w-full max-w-3xl mx-auto mt-16 px-1">
       <div className="mb-10">
-        <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">
+        <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-2">
           Understanding the forecast
         </p>
         <h2 className="text-2xl font-bold text-slate-800 mb-3">
@@ -121,7 +121,7 @@ export default function Explainer() {
             ["Check", "We validate against real field samples, collecting water and identifying cyanobacteria under a microscope, to confirm the model tracks reality."],
           ].map(([label, text], i) => (
             <li key={label} className="flex gap-4">
-              <span className="text-slate-300 font-mono text-sm font-bold pt-0.5 min-w-[28px]">
+              <span className="text-teal-500 font-mono text-sm font-bold pt-0.5 min-w-[28px]">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>
@@ -145,7 +145,7 @@ export default function Explainer() {
                 className="w-full flex justify-between items-center text-left py-4 gap-4"
               >
                 <span className="text-sm font-medium text-slate-800">{item.q}</span>
-                <span className="text-slate-400 text-lg leading-none">
+                <span className="text-teal-500 text-lg leading-none">
                   {open === i ? "–" : "+"}
                 </span>
               </button>
@@ -159,7 +159,7 @@ export default function Explainer() {
         </div>
       </div>
 
-      <div className="rounded-lg bg-slate-50 border border-slate-200 p-4">
+      <div className="rounded-lg bg-sky-50 border border-sky-200 p-4">
         <p className="text-sm text-slate-600 leading-relaxed">
           BloomCast is a student research project and an experimental forecast and not
           an official health advisory. Before entering any water, check the{" "}
@@ -167,7 +167,7 @@ export default function Explainer() {
             href="https://dep.nj.gov/hab/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline font-medium text-slate-700"
+            className="underline font-medium text-teal-700"
           >
             NJ DEP HAB Dashboard
           </a>{" "}

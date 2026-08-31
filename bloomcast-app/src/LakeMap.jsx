@@ -5,10 +5,10 @@ import "leaflet/dist/leaflet.css";
 const API_BASE = "https://bloomcast-oaco.onrender.com";
 
 const RISK_COLORS = {
-  Safe: "#059669",   
-  Watch: "#d97706",   
-  Warning: "#ea580c", 
-  Danger: "#dc2626",  
+  Safe: "#059669",
+  Watch: "#d97706",
+  Warning: "#ea580c",
+  Danger: "#dc2626",
 };
 const NO_DATA_COLOR = "#9ca3af";
 
@@ -50,7 +50,7 @@ export default function LakeMap() {
 
       {!loading && !error && (
         <>
-          <div className="rounded-xl overflow-hidden border border-slate-200" style={{ height: "480px" }}>
+          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style={{ height: "480px" }}>
             <MapContainer center={NJ_CENTER} zoom={9} style={{ height: "100%", width: "100%" }}>
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -116,7 +116,7 @@ export default function LakeMap() {
               href="https://dep.nj.gov/hab/"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline"
+              className="underline hover:text-teal-700"
             >
               NJ DEP HAB Dashboard
             </a>

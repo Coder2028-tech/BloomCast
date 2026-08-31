@@ -57,7 +57,7 @@ function Photo({ photo }) {
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
         />
       </div>
-      <p className="mt-1.5 text-xs text-slate-500 group-hover:text-slate-700">{photo.caption} ↗</p>
+      <p className="mt-1.5 text-xs text-slate-500 group-hover:text-teal-700">{photo.caption} ↗</p>
     </a>
   );
 }
@@ -66,7 +66,7 @@ export default function Cyanobacteria() {
   return (
     <main className="w-full max-w-3xl mx-auto mt-16 px-4 sm:px-1 pb-16">
       <header className="mb-10">
-        <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">
+        <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-2">
           Bloom science · Field study 1
         </p>
         <h1 className="text-2xl font-bold text-slate-800 mb-3">Cyanobacteria and Field Research</h1>
@@ -81,13 +81,13 @@ export default function Cyanobacteria() {
       <section aria-labelledby="science-heading" className="mb-12">
         <h2 id="science-heading" className="text-sm font-semibold text-slate-700 mb-4">The science behind the signal</h2>
         <div className="grid gap-3 sm:grid-cols-2">
-          <article className="rounded-lg border border-slate-200 bg-white p-5">
+          <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <p className="font-semibold text-slate-800 mb-2">What are cyanobacteria?</p>
             <p className="text-sm text-slate-600 leading-relaxed">
               Often called blue-green algae, they are photosynthetic bacteria. Not every bloom is toxic, and toxin presence cannot be determined by sight; laboratory testing is required.
             </p>
           </article>
-          <article className="rounded-lg border border-amber-200 bg-amber-50 p-5">
+          <article className="rounded-xl border border-amber-200 bg-amber-50 p-5">
             <p className="font-semibold text-amber-900 mb-2">Why blooms matter</p>
             <p className="text-sm text-amber-900/80 leading-relaxed">
               Some blooms can irritate skin or produce toxins that affect people, pets, and wildlife. Avoid suspicious water or scum and follow official NJ DEP advisories.
@@ -97,7 +97,7 @@ export default function Cyanobacteria() {
       </section>
 
       <section aria-labelledby="visit-heading" className="mb-12">
-        <p className="text-xs font-semibold tracking-widest text-slate-400 uppercase mb-2">July 11, 2026 · Three monitored lakes</p>
+        <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-2">July 11, 2026 · Three monitored lakes</p>
         <h2 id="visit-heading" className="text-xl font-bold text-slate-800 mb-2">Field Visit 1: What we recorded</h2>
         <p className="text-sm text-slate-600 leading-relaxed mb-6">
           The same-day comparison combined water chemistry, site conditions, official status, and microscope review. These are field observations—not toxin results or health clearances.
@@ -105,7 +105,7 @@ export default function Cyanobacteria() {
 
         <div className="space-y-8">
           {SAMPLES.map((sample) => (
-            <article key={sample.id} className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+            <article key={sample.id} className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
               <div className="p-5 sm:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
                   <div>
@@ -131,10 +131,10 @@ export default function Cyanobacteria() {
         </div>
       </section>
 
-      <section className="rounded-lg bg-slate-800 text-white p-5 mb-12 sm:flex sm:items-start sm:justify-between sm:gap-8">
+      <section className="rounded-2xl bg-teal-800 text-white p-5 mb-12 shadow-sm sm:flex sm:items-start sm:justify-between sm:gap-8">
         <div>
           <h2 className="text-sm font-semibold mb-2">What Field Visit I taught us</h2>
-          <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
+          <p className="text-sm text-teal-100/90 leading-relaxed max-w-xl">
             Three lakes sampled on the same day produced three different combinations of water appearance, chemistry, and microscope evidence. That variation is exactly why BloomCast combines multiple signals instead of relying on a single photo or observation.
           </p>
         </div>
@@ -143,17 +143,17 @@ export default function Cyanobacteria() {
         </p>
       </section>
 
-      <section className="rounded-lg border border-emerald-200 bg-emerald-50 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+      <section className="rounded-2xl border border-teal-200 bg-teal-50 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
         <div>
-          <p className="text-xs font-semibold tracking-widest text-emerald-700 uppercase mb-1">BloomCast’s role</p>
-          <h2 className="text-lg font-bold text-emerald-950">Check before you go.</h2>
-          <p className="text-sm text-emerald-900/80 mt-1 max-w-lg">
+          <p className="text-xs font-semibold tracking-widest text-teal-700 uppercase mb-1">BloomCast’s role</p>
+          <h2 className="text-lg font-bold text-teal-950">Check before you go.</h2>
+          <p className="text-sm text-teal-900/80 mt-1 max-w-lg">
             Start with an early forecast, then verify current conditions with the official source before entering the water.
           </p>
         </div>
         <div className="flex flex-wrap gap-2 mt-4 sm:mt-0 shrink-0">
-          <Link to="/" className="rounded-lg bg-slate-800 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-700 transition">Check a lake</Link>
-          <a href="https://dep.nj.gov/hab/" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-emerald-700 px-3 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-100 transition">NJ DEP status</a>
+          <Link to="/" className="rounded-lg bg-teal-700 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-800 transition">Check a lake</Link>
+          <a href="https://dep.nj.gov/hab/" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-teal-700 px-3 py-2 text-sm font-semibold text-teal-800 hover:bg-teal-100 transition">NJ DEP status</a>
         </div>
       </section>
     </main>

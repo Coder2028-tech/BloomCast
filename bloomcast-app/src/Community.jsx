@@ -73,20 +73,20 @@ function AuthForm({ onAuth }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 mb-8">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 mb-8 shadow-sm">
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setMode("login")}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-            mode === "login" ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-100"
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+            mode === "login" ? "bg-teal-700 text-white" : "text-slate-600 hover:bg-teal-50 hover:text-teal-800"
           }`}
         >
           Log in
         </button>
         <button
           onClick={() => setMode("signup")}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-            mode === "signup" ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-100"
+          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+            mode === "signup" ? "bg-teal-700 text-white" : "text-slate-600 hover:bg-teal-50 hover:text-teal-800"
           }`}
         >
           Sign up
@@ -98,7 +98,7 @@ function AuthForm({ onAuth }) {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
-          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         <input
           value={password}
@@ -106,13 +106,13 @@ function AuthForm({ onAuth }) {
           onKeyDown={(e) => e.key === "Enter" && submit()}
           type="password"
           placeholder="Password"
-          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button
           onClick={submit}
           disabled={loading}
-          className="w-full bg-slate-800 text-white rounded-lg py-2 font-medium disabled:opacity-50"
+          className="w-full bg-teal-700 text-white rounded-lg py-2 font-medium hover:bg-teal-800 disabled:opacity-50 transition shadow-sm"
         >
           {loading ? "..." : mode === "login" ? "Log in" : "Create account"}
         </button>
@@ -166,12 +166,12 @@ function LoggedIn({ username, token, onLogout }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 mb-8">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 mb-8 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-slate-600">
-          Logged in as <span className="font-semibold">{username}</span>
+          Logged in as <span className="font-semibold text-teal-700">{username}</span>
         </p>
-        <button onClick={onLogout} className="text-sm text-slate-500 hover:underline">
+        <button onClick={onLogout} className="text-sm text-slate-500 hover:text-teal-700 hover:underline">
           Log out
         </button>
       </div>
@@ -180,7 +180,7 @@ function LoggedIn({ username, token, onLogout }) {
         <select
           value={lake}
           onChange={(e) => setLake(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           <option value="">Select a lake…</option>
           {lakes.map((name) => (
@@ -193,14 +193,14 @@ function LoggedIn({ username, token, onLogout }) {
           rows={3}
           maxLength={1000}
           placeholder="What did you observe? (e.g. green water, dead fish, a posted warning sign)"
-          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         {status?.error && <p className="text-sm text-red-600">{status.error}</p>}
         {status?.ok && <p className="text-sm text-green-700">{status.ok}</p>}
         <button
           onClick={submit}
           disabled={loading}
-          className="bg-slate-800 text-white rounded-lg px-4 py-2 font-medium disabled:opacity-50"
+          className="bg-teal-700 text-white rounded-lg px-4 py-2 font-medium hover:bg-teal-800 disabled:opacity-50 transition shadow-sm"
         >
           {loading ? "..." : "Submit observation"}
         </button>
@@ -230,9 +230,9 @@ function Feed() {
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-slate-800">Recent observations</h2>
       {posts.map((p) => (
-        <div key={p.id} className="rounded-xl border border-slate-200 bg-white p-4">
+        <div key={p.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-baseline justify-between mb-1">
-            <span className="font-medium text-slate-700">{p.lake_name}</span>
+            <span className="font-medium text-teal-800">{p.lake_name}</span>
             <span className="text-xs text-slate-400">
               {new Date(p.created_at).toLocaleDateString()}
             </span>
