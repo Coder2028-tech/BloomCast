@@ -1,2 +1,0 @@
-model,n,rmse_ugL,tier_acc,within_1_tier
-rf_baseline,242,2.49,0.996,1.0
