@@ -8,3 +8,5 @@ node_modules/
 *.tif
 *.nc
 data/
+nldas_smoke/
+sentinel2_sampled/
