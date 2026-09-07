@@ -78,7 +78,7 @@ function Home() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Enter NJ zip code or lake name"
-          className="px-4 py-2 rounded-lg border border-slate-300 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="px-4 py-2 rounded-lg border border-slate-300 w-full sm:w-68 focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         <button
           type="submit"
