@@ -347,6 +347,27 @@ def forecast_by_name(lake_name: str):
         return {"error": f"No lake matching '{lake_name}'. Try the full lake name."}
     return build_forecast(lake)
 
+@app.get("/posts/mine")
+def my_posts(user_id: int = Depends(require_user)):
+    db = SessionLocal()
+    try:
+        rows = (db.query(Post)
+                .filter(Post.user_id == user_id)
+                .order_by(Post.created_at.desc())
+                .all())
+        return {"posts": [
+            {
+                "id": p.id,
+                "lake_name": p.lake_name,
+                "body": p.body,
+                "approved": p.approved,
+                "created_at": p.created_at.isoformat(),
+            }
+            for p in rows
+        ]}
+    finally:
+        db.close()
+
 def _haversine_miles(lat1, lon1, lat2, lon2):
     R = 3958.8 
     p1, p2 = math.radians(lat1), math.radians(lat2)

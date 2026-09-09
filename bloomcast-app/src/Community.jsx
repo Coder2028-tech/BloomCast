@@ -126,18 +126,29 @@ function LoggedIn({ username, token, onLogout }) {
   const [body, setBody] = useState("");
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [mine, setMine] = useState(null);
+
+  async function loadMine() {
+    try {
+      const res = await fetch(`${API_BASE}/posts/mine`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setMine(data.posts || []);
+    } catch {
+      setMine([]);
+    }
+  }
 
   useEffect(() => {
-    fetch(`${API_BASE}/lakes`)
-      .then((r) => r.json())
-      .then((d) => setLakes((d.lakes || []).map((l) => l.lake_name)))
-      .catch(() => setLakes([]));
+    loadMine();
   }, []);
 
   async function submit() {
     setStatus(null);
-    if (!lake || !body.trim()) {
-      setStatus({ error: "Pick a lake and write something." });
+    if (!lake.trim() || !body.trim()) {
+      setStatus({ error: "Enter a lake name and write something." });
       return;
     }
     setLoading(true);
@@ -148,7 +159,7 @@ function LoggedIn({ username, token, onLogout }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ lake_name: lake, body: body.trim() }),
+        body: JSON.stringify({ lake_name: lake.trim(), body: body.trim() }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -157,6 +168,7 @@ function LoggedIn({ username, token, onLogout }) {
         setStatus({ ok: data.message || "Submitted for review." });
         setBody("");
         setLake("");
+        loadMine(); 
       }
     } catch {
       setStatus({ error: "Couldn't reach the server." });
@@ -165,40 +177,85 @@ function LoggedIn({ username, token, onLogout }) {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 mb-8 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-slate-600">
-          Logged in as <span className="font-semibold text-teal-700">{username}</span>
-        </p>
-        <button onClick={onLogout} className="text-sm text-slate-500 hover:text-teal-700 hover:underline">
-          Log out
-        </button>
+    <div className="mb-8 space-y-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm text-slate-600">
+            Logged in as <span className="font-semibold text-teal-700">{username}</span>
+          </p>
+          <button onClick={onLogout} className="text-sm text-slate-500 hover:text-teal-700 hover:underline">
+            Log out
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          <input
+            value={lake}
+            onChange={(e) => setLake(e.target.value)}
+            placeholder="Which lake? (e.g. Lake Hopatcong)"
+            className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={3}
+            maxLength={1000}
+            placeholder="What did you observe? (e.g. green water, dead fish, a posted warning sign)"
+            className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+          {status?.error && <p className="text-sm text-red-600">{status.error}</p>}
+          {status?.ok && <p className="text-sm text-green-700">{status.ok}</p>}
+          <button
+            onClick={submit}
+            disabled={loading}
+            className="bg-teal-700 text-white rounded-lg px-4 py-2 font-medium hover:bg-teal-800 disabled:opacity-50 transition shadow-sm"
+          >
+            {loading ? "..." : "Submit observation"}
+          </button>
+        </div>
       </div>
 
+      <MyPosts mine={mine} />
+    </div>
+  );
+}
+
+function MyPosts({ mine }) {
+  if (mine === null) {
+    return null;
+  }
+  if (mine.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-slate-800 mb-1">Your submissions</h2>
+        <p className="text-sm text-slate-400">You haven't posted anything yet.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 className="text-sm font-semibold text-slate-800 mb-3">Your submissions</h2>
       <div className="space-y-3">
-        <input
-          value={lake}
-          onChange={(e) => setLake(e.target.value)}
-          placeholder="Which lake? (e.x. Lake Hopatcong)"
-          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
-        />
-        <textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          rows={3}
-          maxLength={1000}
-          placeholder="What did you observe? (e.x. green water, dead fish, a posted warning sign)"
-          className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
-        />
-        {status?.error && <p className="text-sm text-red-600">{status.error}</p>}
-        {status?.ok && <p className="text-sm text-green-700">{status.ok}</p>}
-        <button
-          onClick={submit}
-          disabled={loading}
-          className="bg-teal-700 text-white rounded-lg px-4 py-2 font-medium hover:bg-teal-800 disabled:opacity-50 transition shadow-sm"
-        >
-          {loading ? "..." : "Submit observation"}
-        </button>
+        {mine.map((p) => (
+          <div key={p.id} className="border-b border-slate-100 last:border-0 pb-3 last:pb-0">
+            <div className="flex items-baseline justify-between mb-0.5">
+              <span className="font-medium text-teal-800 text-sm">{p.lake_name}</span>
+              <span
+                className={`text-xs font-medium rounded-full px-2 py-0.5 ${
+                  p.approved
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-amber-100 text-amber-800"
+                }`}
+              >
+                {p.approved ? "Published" : "Under review"}
+              </span>
+            </div>
+            <p className="text-sm text-slate-700">{p.body}</p>
+            <p className="text-xs text-slate-400 mt-1">
+              {new Date(p.created_at).toLocaleDateString()}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -206,12 +263,40 @@ function LoggedIn({ username, token, onLogout }) {
 
 function Feed() {
   const [posts, setPosts] = useState(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let done = false;
+    fetch(`${API_BASE}/posts`)
+      .then((r) => {
+        if (!r.ok) throw new Error();
+        return r.json();
+      })
+      .then((d) => {
+        if (!done) setPosts(d.posts || []);
+      })
+      .catch(() => {
+        if (!done) {
+          setPosts([]);
+          setFailed(true);
+        }
+      });
+    return () => {
+      done = true;
+    };
+  }, []);
 
   if (posts === null) {
     return <p className="text-sm text-slate-400">Loading observations…</p>;
   }
   if (posts.length === 0) {
-    return <p className="text-sm text-slate-400">No observations yet. Be the first to post.</p>;
+    return (
+      <p className="text-sm text-slate-400">
+        {failed
+          ? "Couldn't load observations right now. The server may be waking up — try refreshing."
+          : "No observations yet. Be the first to post."}
+      </p>
+    );
   }
 
   return (
