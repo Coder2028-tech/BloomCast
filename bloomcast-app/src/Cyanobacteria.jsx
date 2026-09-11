@@ -100,7 +100,7 @@ export default function Cyanobacteria() {
         <p className="text-xs font-semibold tracking-widest text-teal-600 uppercase mb-2">July 11, 2026 · Three monitored lakes</p>
         <h2 id="visit-heading" className="text-xl font-bold text-slate-800 mb-2">Field Visit 1: What we recorded</h2>
         <p className="text-sm text-slate-600 leading-relaxed mb-6">
-          The same-day comparison combined water chemistry, site conditions, official status, and microscope review. These are field observations—not toxin results or health clearances.
+          The same-day comparison combined water chemistry, site conditions, official status, and microscope review. These are field observations, not toxin results or health clearances.
         </p>
 
         <div className="space-y-8">
