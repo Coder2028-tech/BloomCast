@@ -145,8 +145,8 @@ function Home() {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sky-50 to-slate-50">
-      <NavBar />
+  <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-50">      
+    <NavBar />
       <Suspense fallback={<div className="w-full max-w-3xl mx-auto mt-16 px-4 text-sm text-slate-500">Loading…</div>}>
         <Routes>
           <Route path="/" element={<Home />} />
