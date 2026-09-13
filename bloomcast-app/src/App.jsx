@@ -145,17 +145,19 @@ function Home() {
 
 export default function App() {
   return (
-  <div className="min-h-screen flex flex-col bg-sky-50">   
-   <NavBar />
-      <Suspense fallback={<div className="w-full max-w-3xl mx-auto mt-16 px-4 text-sm text-slate-500">Loading…</div>}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<Explainer />} />
-          <Route path="/field-research" element={<Cyanobacteria />} />
-          <Route path="/cyanobacteria" element={<Navigate to="/field-research" replace />} />
-          <Route path="/community" element={<Community />} />
-        </Routes>
-      </Suspense>
+    <div className="min-h-screen flex flex-col bg-sky-50">
+      <NavBar />
+      <main className="flex-1">
+        <Suspense fallback={<div className="w-full max-w-3xl mx-auto mt-16 px-4 text-sm text-slate-500">Loading…</div>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<Explainer />} />
+            <Route path="/field-research" element={<Cyanobacteria />} />
+            <Route path="/cyanobacteria" element={<Navigate to="/field-research" replace />} />
+            <Route path="/community" element={<Community />} />
+          </Routes>
+        </Suspense>
+      </main>
       <DataSources />
     </div>
   );
