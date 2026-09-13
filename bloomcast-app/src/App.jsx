@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import DataSources from "./datasources";
 import Community from "./Community";
 
 const LakeMap = lazy(() => import("./LakeMap"));
@@ -155,6 +156,7 @@ export default function App() {
           <Route path="/community" element={<Community />} />
         </Routes>
       </Suspense>
+      <DataSources />
     </div>
   );
 }
