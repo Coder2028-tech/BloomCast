@@ -115,7 +115,6 @@ def build_training_dataset(
         land = land_use.drop(columns=["date"], errors="ignore").drop_duplicates("lake")
         rows = rows.merge(land, on="lake", how="left")
 
-    # A seven-day feature window is valid only with all 168 hourly inputs.
     rows["has_weather"] = rows.get("nldas_hours", pd.Series(0, index=rows.index)).fillna(0).ge(168)
     rows["has_satellite"] = rows.filter(regex=r"^satellite_").notna().any(axis=1)
     rows["has_land_use"] = rows.filter(regex=r"^land_").notna().any(axis=1)
