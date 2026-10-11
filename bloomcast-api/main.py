@@ -27,13 +27,20 @@ def require_user(authorization: str | None = Header(default=None)) -> int:
     if user_id is None:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     return user_id
+def get_db():
+    if SessionLocal is None:
+        raise HTTPException(status_code=503, detail="Community features are temporarily unavailable.")
+    return SessionLocal()
 
 class NewPost(BaseModel):
     lake_name: str
     body: str
 
-create_tables()
-print("Tables were created")
+try:
+    create_tables()
+    print("Tables were created")
+except Exception as e:
+    print(f"[warn] Database unavailable at startup; community features disabled: {e}")
 
 @app.post("/posts")
 def create_post(post: NewPost, user_id: int = Depends(require_user)):
@@ -49,7 +56,7 @@ def create_post(post: NewPost, user_id: int = Depends(require_user)):
     if len(body) > 1000:
         raise HTTPException(status_code=400, detail="Post too long (max 1000 chars)")
  
-    db = SessionLocal()
+    db = get_db()
     try:
         new = Post(user_id=user_id, lake_name=lake, body=body, approved=False)
         db.add(new)
@@ -64,7 +71,7 @@ def create_post(post: NewPost, user_id: int = Depends(require_user)):
 @app.get("/posts")
 def list_posts(lake: str | None = None):
     """Public feed: only APPROVED posts. Optionally filter by lake."""
-    db = SessionLocal()
+    db = get_db()
     try:
         q = db.query(Post, User).join(User, Post.user_id == User.id).filter(Post.approved == True)
         if lake:
@@ -91,7 +98,7 @@ def require_admin(x_admin_key: str | None = Header(default=None)):
 @app.get("/posts/pending")
 def pending_posts(x_admin_key: str | None = Header(default=None)):
     require_admin(x_admin_key)
-    db = SessionLocal()
+    db = get_db ()
     try:
         q = (db.query(Post, User).join(User, Post.user_id == User.id)
              .filter(Post.approved == False).order_by(Post.created_at.desc()))
@@ -107,7 +114,7 @@ def pending_posts(x_admin_key: str | None = Header(default=None)):
 @app.post("/posts/{post_id}/approve")
 def approve_post(post_id: int, x_admin_key: str | None = Header(default=None)):
     require_admin(x_admin_key)
-    db = SessionLocal()
+    db = get_db ()
     try:
         post = db.query(Post).filter(Post.id == post_id).first()
         if not post:
@@ -122,7 +129,7 @@ def approve_post(post_id: int, x_admin_key: str | None = Header(default=None)):
 @app.delete("/posts/{post_id}")
 def delete_post(post_id: int, x_admin_key: str | None = Header(default=None)):
     require_admin(x_admin_key)
-    db = SessionLocal()
+    db = get_db ()
     try:
         post = db.query(Post).filter(Post.id == post_id).first()
         if not post:
@@ -155,7 +162,7 @@ def signup(body: SignupBody):
     if not username or not password:
         raise HTTPException(status_code=400, detail="Username and password required")
  
-    db = SessionLocal()
+    db = get_db ()
     try:
         existing = db.query(User).filter(User.username == username).first()
         if existing:
@@ -171,7 +178,7 @@ def signup(body: SignupBody):
 
 @app.post("/login")
 def login(body: LoginBody):
-    db = SessionLocal()
+    db = get_db ()
     try:
         user = db.query(User).filter(User.username == body.username.strip()).first()
         if not user or not verify_password(body.password, user.password_hash):
@@ -349,7 +356,7 @@ def forecast_by_name(lake_name: str):
 
 @app.get("/posts/mine")
 def my_posts(user_id: int = Depends(require_user)):
-    db = SessionLocal()
+    db = get_db ()
     try:
         rows = (db.query(Post)
                 .filter(Post.user_id == user_id)
