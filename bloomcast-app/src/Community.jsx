@@ -293,7 +293,7 @@ function Feed() {
     return (
       <p className="text-sm text-slate-400">
         {failed
-          ? "Couldn't load observations right now. The server may be waking up — try refreshing."
+          ? "Couldn't load observations right now. The server may be waking up. Try refreshing."
           : "No observations yet. Be the first to post."}
       </p>
     );
