@@ -1,0 +1,16 @@
+{
+  "model": "RandomForest_baseline_NJ",
+  "held_out_site": "NJDEP_BFBM-NJLM-0028-2",
+  "rmse": 10.427924570739846,
+  "r2": -0.28282899290221764,
+  "n_train": 934,
+  "n_test": 15,
+  "n_sites": 301,
+  "feature_importance": {
+    "chl_a_lag1": 0.37548571641048767,
+    "chl_a_lag2": 0.23420936337158532,
+    "temp_lag1": 0.09371969869129279,
+    "temp_lag2": 0.1303296520017417,
+    "phosphorus": 0.16625556952489243
+  }
+}
